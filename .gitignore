@@ -1,0 +1,13 @@
+target/
+uploads/
+tmp/
+src/log/
+dmp/
+.settings/
+*~
+*.swp
+*.bak
+*.log
+*.apk
+.classpath
+.project
