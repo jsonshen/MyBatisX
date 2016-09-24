@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.shenjia</groupId>
 	<artifactId>MyBatisX</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<name>MyBatisX</name>
 	<description>MyBatis extensions library</description>
 	<url>https://github.com/jsonshen/MyBatisX</url>
@@ -44,6 +44,12 @@
 			<groupId>org.mybatis.generator</groupId>
 			<artifactId>mybatis-generator-core</artifactId>
 			<version>1.3.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.25-incubating</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
