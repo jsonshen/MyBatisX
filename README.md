@@ -1,5 +1,5 @@
 # MyBatisX
-MyBatis extensions library
+A MyBatis generator extensions library
 
 ## Prerequisites
 
