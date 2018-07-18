@@ -44,7 +44,9 @@ public class RenameExamplePlugin extends PluginAdapter {
 
 	@Override
 	public void initialized(IntrospectedTable introspectedTable) {
-		renameExampleClass(introspectedTable);
+		if (null != introspectedTable.getExampleType()) {
+			renameExampleClass(introspectedTable);
+		}
 	}
 
 	@Override
@@ -64,10 +66,10 @@ public class RenameExamplePlugin extends PluginAdapter {
 		renameXmlNodes(sqlMap);
 		return true;
 	}
-
+	
 	private void renameExampleClass(IntrospectedTable it) {
 		String oldType = it.getExampleType();
-		String newType = oldType.replaceAll("Example", "Filter");
+		String newType = oldType.replaceAll("Example", "Filter"); //.replaceAll("domain", "filter");
 		it.setExampleType(newType);
 	}
 
