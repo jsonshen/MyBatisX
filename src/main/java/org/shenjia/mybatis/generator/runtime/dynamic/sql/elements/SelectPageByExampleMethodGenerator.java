@@ -35,7 +35,7 @@ public class SelectPageByExampleMethodGenerator extends AbstractMethodGenerator 
 
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.QueryExpressionDSL")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("com.coshine.emv3ds.paging.PagingAdapter")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.shenjia.sqlpaging.PagingAdapter")); //$NON-NLS-1$
         imports.add(FullyQualifiedJavaType.getNewListInstance());
         imports.add(recordType);
         
