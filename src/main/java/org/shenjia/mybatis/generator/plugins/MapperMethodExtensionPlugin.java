@@ -58,6 +58,8 @@ public class MapperMethodExtensionPlugin extends PluginAdapter {
 		String addSelectOneByExampleMethod = properties.getProperty("addSelectOneByExampleMethod", "true");
 		if (StringUtility.isTrue(addSelectOneByExampleMethod)) {
 			addSelectOneByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
+			method.getBodyLines().set(0, "return selectOneByExample()");
+			method.getBodyLines().remove(1);
 		}
 		return super.clientSelectByPrimaryKeyMethodGenerated(method, interfaze, introspectedTable);
 	}
