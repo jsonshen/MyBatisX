@@ -11,3 +11,4 @@ dmp/
 *.apk
 .classpath
 .project
+.DS_Store
