@@ -22,6 +22,8 @@ import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.Parameter;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.internal.util.StringUtility;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
@@ -40,27 +42,65 @@ public class MapperMethodExtensionPlugin extends PluginAdapter {
 	public boolean validate(List<String> warnings) {
 		return true;
 	}
+	
+	@Override
+	public boolean clientGenerated(Interface interfaze,
+	    TopLevelClass topLevelClass,
+	    IntrospectedTable introspectedTable) {
+	    FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
+        String resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result"; //$NON-NLS-1$
+        String tableFieldName = JavaBeansUtil
+                .getValidPropertyName(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
+        FragmentGenerator fragmentGenerator = new FragmentGenerator.Builder().withIntrospectedTable(introspectedTable)
+                .withResultMapId(resultMapId).build();
+
+        String addSelectPageByExampleMethod = properties.getProperty("addSelectPageByExampleMethod", "true");
+        if (StringUtility.isTrue(addSelectPageByExampleMethod)) {
+            addSelectPageByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
+        }
+        String addSelectOneByExampleMethod = properties.getProperty("addSelectOneByExampleMethod", "true");
+        if (StringUtility.isTrue(addSelectOneByExampleMethod)) {
+            addSelectOneByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
+        }
+	    return super.clientGenerated(interfaze, topLevelClass, introspectedTable);
+	}
+	
+    @Override
+    public boolean clientBasicSelectManyMethodGenerated(Method method,
+        Interface interfaze,
+        IntrospectedTable introspectedTable) {
+        boolean haveSelectOne = false;
+        for (Method m : interfaze.getMethods()) {
+            if ("selectOne".equals(m.getName())) {
+                haveSelectOne = true;
+                break;
+            }
+        }
+        if (!haveSelectOne) {
+            FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
+            FullyQualifiedJavaType returnType = new FullyQualifiedJavaType(recordType.getShortNameWithoutTypeArguments());
+            Method m = new Method("selectOne");
+            for (Parameter p : method.getParameters()) {
+                m.addParameter(p);
+            }
+            for (String a : method.getAnnotations()) {
+                m.addAnnotation(a);
+            }
+            m.addBodyLines(method.getBodyLines());
+            m.setReturnType(returnType);
+            interfaze.addMethod(m);
+        }
+	    return super.clientBasicSelectManyMethodGenerated(method, interfaze, introspectedTable);
+	}
 
 	@Override
 	public boolean clientSelectByPrimaryKeyMethodGenerated(Method method, Interface interfaze,
 			IntrospectedTable introspectedTable) {
-		FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
-		String resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result"; //$NON-NLS-1$
-		String tableFieldName = JavaBeansUtil
-				.getValidPropertyName(introspectedTable.getFullyQualifiedTable().getDomainObjectName());
-		FragmentGenerator fragmentGenerator = new FragmentGenerator.Builder().withIntrospectedTable(introspectedTable)
-				.withResultMapId(resultMapId).build();
-
-		String addSelectPageByExampleMethod = properties.getProperty("addSelectPageByExampleMethod", "true");
-		if (StringUtility.isTrue(addSelectPageByExampleMethod)) {
-			addSelectPageByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
-		}
-		String addSelectOneByExampleMethod = properties.getProperty("addSelectOneByExampleMethod", "true");
-		if (StringUtility.isTrue(addSelectOneByExampleMethod)) {
-			addSelectOneByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
-			method.getBodyLines().set(0, "return selectOneByExample()");
-			method.getBodyLines().remove(1);
-		}
+	    String addSelectOneByExampleMethod = properties.getProperty("addSelectOneByExampleMethod", "true");
+        if (StringUtility.isTrue(addSelectOneByExampleMethod)) {
+            method.getBodyLines().set(0, "return selectOneByExample()");
+            method.getBodyLines().remove(1);
+        }
 		return super.clientSelectByPrimaryKeyMethodGenerated(method, interfaze, introspectedTable);
 	}
 
