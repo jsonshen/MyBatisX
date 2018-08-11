@@ -83,12 +83,13 @@ public class MapperMethodExtensionPlugin extends PluginAdapter {
             for (Parameter p : method.getParameters()) {
                 m.addParameter(p);
             }
-            for (String a : method.getAnnotations()) {
-                m.addAnnotation(a);
-            }
+            m.addAnnotation("@Generated(\"org.mybatis.generator.api.MyBatisGenerator\")");
+            m.addAnnotation("@SelectProvider(type=SqlProviderAdapter.class, method=\"select\")");
+            m.addAnnotation("@ResultMap(\"" + recordType.getShortNameWithoutTypeArguments() + "Result\")");
             m.addBodyLines(method.getBodyLines());
             m.setReturnType(returnType);
             interfaze.addMethod(m);
+            interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.ResultMap"));
         }
 	    return super.clientBasicSelectManyMethodGenerated(method, interfaze, introspectedTable);
 	}
