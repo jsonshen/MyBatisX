@@ -12,3 +12,4 @@ dmp/
 .classpath
 .project
 .DS_Store
+*.class
