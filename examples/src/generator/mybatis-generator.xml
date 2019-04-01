@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<context id="MyBatisXExamples" targetRuntime="MyBatis3DynamicSql" defaultModelType="conditional">
+		<plugin type="org.shenjia.mybatis.generator.plugins.JavaCommentPlugin">
+			<property name="licenseCommentFile" value="src/generator/source-file-header.txt" />
+		</plugin>
+		<!-- <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin" /> -->
+		<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin" />
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+		<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
+		<plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin" />
+		<plugin type="org.mybatis.generator.plugins.VirtualPrimaryKeyPlugin" />
+		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicSqlExtensionPlugin" />
+
+		<commentGenerator>
+			<!-- 这个元素用来去除指定生成的注释中是否包含生成的日期 false:表示保护 -->
+			<!-- 如果生成日期，会造成即使修改一个字段，整个实体类所有属性都会发生变化，不利于版本控制，所以设置为true -->
+			<property name="suppressDate" value="true" />
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		<!--数据库链接URL，用户名、密码 -->
+		<jdbcConnection driverClass="org.h2.Driver"
+			connectionURL="jdbc:h2:~/MyBatisX/examples" userId="sa" password="">
+		</jdbcConnection>
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+		<!-- 生成模型的包名和位置 -->
+		<javaModelGenerator
+			targetPackage="org.shenjia.mybatis.examples.entity"
+			targetProject="src/main/java">
+			<!-- optional.是否对model添加 构造函数 -->
+			<property name="constructorBased" value="false" />
+			<!-- 是否允许子包，即targetPackage.schemaName.tableName -->
+			<property name="enableSubPackages" value="true" />
+			<!-- optional.建立的Model对象是否 不可改变 即生成的Model对象不会有 setter方法，只有构造方法 -->
+			<property name="immutable" value="false" />
+			<!-- 是否对类CHAR类型的列的数据进行trim操作 -->
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		<!-- 生成DAO的包名和位置 -->
+		<javaClientGenerator
+			targetPackage="org.shenjia.mybatis.examples.mapper"
+			targetProject="src/main/java" type="ANNOTATEDMAPPER">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+
+		<!-- ACL 模块 -->
+		<table tableName="no_pk" domainObjectName="NoPk" />
+		<table tableName="single_col_pk" domainObjectName="SingleColPk" />
+		<table tableName="multi_col_pk" domainObjectName="MultiColPk" />
+	</context>
+</generatorConfiguration>

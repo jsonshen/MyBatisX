@@ -13,6 +13,8 @@
 	<modules>
 		<module>core</module>
 		<module>generator</module>
+		<module>examples</module>
+		<module>docs</module>
 	</modules>
 
 	<properties>

@@ -106,12 +106,63 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         IntrospectedTable introspectedTable) {
         String addSelectOneByExampleMethod = properties.getProperty("addSelectOneByExampleMethod", "true");
         if (StringUtility.isTrue(addSelectOneByExampleMethod)) {
-            method.getBodyLines()
-                .set(0, "return selectOneByExample()");
-            method.getBodyLines()
-                .remove(1);
+            List<IntrospectedColumn> pkColumns = introspectedTable.getPrimaryKeyColumns();
+            if (pkColumns.size() > 1) {
+                FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
+                String resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result"; //$NON-NLS-1$
+                FragmentGenerator fragmentGenerator = new FragmentGenerator.Builder()
+                    .withIntrospectedTable(introspectedTable)
+                    .withResultMapId(resultMapId)
+                    .build();
+                // Replace method parameters
+                method.getParameters()
+                    .clear();
+                method.addParameter(new Parameter(recordType, "record"));
+
+                // Replace method body lines
+                method.getBodyLines()
+                    .clear();
+                method.addBodyLine("return selectOneByExample()");
+                method.addBodyLines(fragmentGenerator.getPrimaryKeyWhereClauseForUpdate());
+                method.addBodyLine("        .build()");
+                method.addBodyLine("        .execute();");
+            } else {
+                List<String> bodyLines = method.getBodyLines();
+                bodyLines.set(0, "return selectOneByExample()");
+                bodyLines.remove(1);
+            }
         }
         return super.clientSelectByPrimaryKeyMethodGenerated(method, interfaze, introspectedTable);
+    }
+    
+    @Override
+    public boolean clientDeleteByPrimaryKeyMethodGenerated(Method method,
+        Interface interfaze,
+        IntrospectedTable introspectedTable) {
+        List<IntrospectedColumn> pkColumns = introspectedTable.getPrimaryKeyColumns();
+        if (pkColumns.size() > 1) {
+            FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
+            String resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result"; //$NON-NLS-1$
+            String tableFieldName = JavaBeansUtil.getValidPropertyName(introspectedTable.getFullyQualifiedTable()
+                .getDomainObjectName());
+            FragmentGenerator fragmentGenerator = new FragmentGenerator.Builder()
+                .withIntrospectedTable(introspectedTable)
+                .withResultMapId(resultMapId)
+                .build();
+            // Replace method parameters
+            method.getParameters()
+                .clear();
+            method.addParameter(new Parameter(recordType, "record"));
+
+            // Replace method body lines
+            method.getBodyLines()
+                .clear();
+            method.addBodyLine("return DeleteDSL.deleteFromWithMapper(this::delete, " + tableFieldName + ")");
+            method.addBodyLines(fragmentGenerator.getPrimaryKeyWhereClauseForUpdate());
+            method.addBodyLine("        .build()");
+            method.addBodyLine("        .execute();");
+        }
+        return super.clientDeleteByPrimaryKeyMethodGenerated(method, interfaze, introspectedTable);
     }
 
     private void addSelectPageByExampleMethod(Interface interfaze,
@@ -154,21 +205,21 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         }
     }
 
-    /**
-     * Only supports single column primary keys
-     * 
-     * @param interfaze
-     * @param introspectedTable
-     * @param recordType
-     */
     private void addExtendsGenericMapper(Interface interfaze,
         IntrospectedTable introspectedTable,
         FullyQualifiedJavaType recordType) {
         List<IntrospectedColumn> pkCloumns = introspectedTable.getPrimaryKeyColumns();
-        String primaryKeyType = (null == pkCloumns || pkCloumns.isEmpty()) ? "Object"
-            : pkCloumns.get(0)
+        String primaryKeyType;
+        if (null == pkCloumns || pkCloumns.isEmpty()) {
+            primaryKeyType = "NoPrimaryKey";
+            interfaze.addImportedType(new FullyQualifiedJavaType("org.shenjia.mybatis.core.NoPrimaryKey"));
+        } else if (pkCloumns.size() > 1) {
+            primaryKeyType = recordType.getShortName();
+        } else {
+            primaryKeyType = pkCloumns.get(0)
                 .getFullyQualifiedJavaType()
                 .getShortName();
+        }
         interfaze.addImportedType(new FullyQualifiedJavaType("org.shenjia.mybatis.core.GenericMapper"));
         interfaze.addSuperInterface(
             new FullyQualifiedJavaType("GenericMapper<" + recordType.getShortName() + ", " + primaryKeyType + ">"));
