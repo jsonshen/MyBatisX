@@ -15,6 +15,7 @@
  */
 package org.shenjia.mybatis.generator.plugins;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -23,14 +24,19 @@ import java.util.stream.Collectors;
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
+import org.mybatis.generator.api.ShellCallback;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
+import org.mybatis.generator.exception.ShellException;
+import org.mybatis.generator.internal.DefaultShellCallback;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.internal.util.StringUtility;
+import org.mybatis.generator.logging.Log;
+import org.mybatis.generator.logging.LogFactory;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.FragmentGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.MethodAndImports;
@@ -45,6 +51,7 @@ import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectPageByEx
  */
 public class DynamicSqlExtensionPlugin extends PluginAdapter {
 
+    private static final Log LOG = LogFactory.getLog(DynamicSqlExtensionPlugin.class);
     private List<GeneratedJavaFile> generatedJavaFiles = new ArrayList<>();
 
     public boolean validate(List<String> warnings) {
@@ -181,19 +188,36 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         importTypes.clear();
         importTypes.addAll(newImportTypes);
 
-        String daoType = mapperInterfaze.getType()
+        String targetProject = context.getJavaModelGeneratorConfiguration()
+            .getTargetProject();
+
+        FullyQualifiedJavaType daoType = new FullyQualifiedJavaType(mapperInterfaze.getType()
             .getFullyQualifiedName()
-            .replaceFirst("Mapper", "Dao");
+            .replaceFirst("Mapper", "Dao"));
+
+        try {
+            ShellCallback sc = new DefaultShellCallback(false);
+            File fileDir = sc.getDirectory(targetProject, daoType.getPackageName());
+            File javaFile = new File(fileDir, daoType.getShortName() + ".java");
+            if (javaFile.exists() && javaFile.isFile()) {
+                LOG.debug("Existing file " + javaFile.getPath() + ", skips generating this file.");
+                return;
+            }
+        } catch (ShellException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
         Interface daoInterface = new Interface(daoType);
         daoInterface.setVisibility(JavaVisibility.PUBLIC);
         daoInterface.addSuperInterface(mapperInterfaze.getType());
         daoInterface.addAnnotation("@Mapper");
         daoInterface.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper"));
-
-        String targetProject = context.getJavaModelGeneratorConfiguration()
-            .getTargetProject();
         GeneratedJavaFile daoInterfaceJavaFile = new GeneratedJavaFile(daoInterface, targetProject,
-            context.getJavaFormatter());
+            context.getJavaFormatter()) {
+            public boolean isMergeable() {
+                return false;
+            }
+        };
         generatedJavaFiles.add(daoInterfaceJavaFile);
     }
 }
