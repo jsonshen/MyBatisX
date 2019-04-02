@@ -15,13 +15,17 @@
  */
 package org.shenjia.mybatis.generator.plugins;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
+import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
@@ -41,8 +45,15 @@ import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectPageByEx
  */
 public class DynamicSqlExtensionPlugin extends PluginAdapter {
 
+    private List<GeneratedJavaFile> generatedJavaFiles = new ArrayList<>();
+
     public boolean validate(List<String> warnings) {
         return true;
+    }
+
+    @Override
+    public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles() {
+        return generatedJavaFiles;
     }
 
     @Override
@@ -56,13 +67,14 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         FragmentGenerator fragmentGenerator = new FragmentGenerator.Builder().withIntrospectedTable(introspectedTable)
             .withResultMapId(resultMapId)
             .build();
-
-        addExtendsGenericMapper(interfaze, introspectedTable, recordType);
-
+        // generateDaoClassIfNotExsits
+        generateDaoClassIfNotExsits(interfaze, topLevelClass, introspectedTable);
+        // addSelectPageByExampleMethod
         String addSelectPageByExampleMethod = properties.getProperty("addSelectPageByExampleMethod", "true");
         if (StringUtility.isTrue(addSelectPageByExampleMethod)) {
             addSelectPageByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
         }
+        // addSelectOneByExampleMethod
         String addSelectOneByExampleMethod = properties.getProperty("addSelectOneByExampleMethod", "true");
         if (StringUtility.isTrue(addSelectOneByExampleMethod)) {
             addSelectOneByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
@@ -106,63 +118,11 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         IntrospectedTable introspectedTable) {
         String addSelectOneByExampleMethod = properties.getProperty("addSelectOneByExampleMethod", "true");
         if (StringUtility.isTrue(addSelectOneByExampleMethod)) {
-            List<IntrospectedColumn> pkColumns = introspectedTable.getPrimaryKeyColumns();
-            if (pkColumns.size() > 1) {
-                FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
-                String resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result"; //$NON-NLS-1$
-                FragmentGenerator fragmentGenerator = new FragmentGenerator.Builder()
-                    .withIntrospectedTable(introspectedTable)
-                    .withResultMapId(resultMapId)
-                    .build();
-                // Replace method parameters
-                method.getParameters()
-                    .clear();
-                method.addParameter(new Parameter(recordType, "record"));
-
-                // Replace method body lines
-                method.getBodyLines()
-                    .clear();
-                method.addBodyLine("return selectOneByExample()");
-                method.addBodyLines(fragmentGenerator.getPrimaryKeyWhereClauseForUpdate());
-                method.addBodyLine("        .build()");
-                method.addBodyLine("        .execute();");
-            } else {
-                List<String> bodyLines = method.getBodyLines();
-                bodyLines.set(0, "return selectOneByExample()");
-                bodyLines.remove(1);
-            }
+            List<String> bodyLines = method.getBodyLines();
+            bodyLines.set(0, "return selectOneByExample()");
+            bodyLines.remove(1);
         }
         return super.clientSelectByPrimaryKeyMethodGenerated(method, interfaze, introspectedTable);
-    }
-    
-    @Override
-    public boolean clientDeleteByPrimaryKeyMethodGenerated(Method method,
-        Interface interfaze,
-        IntrospectedTable introspectedTable) {
-        List<IntrospectedColumn> pkColumns = introspectedTable.getPrimaryKeyColumns();
-        if (pkColumns.size() > 1) {
-            FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
-            String resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result"; //$NON-NLS-1$
-            String tableFieldName = JavaBeansUtil.getValidPropertyName(introspectedTable.getFullyQualifiedTable()
-                .getDomainObjectName());
-            FragmentGenerator fragmentGenerator = new FragmentGenerator.Builder()
-                .withIntrospectedTable(introspectedTable)
-                .withResultMapId(resultMapId)
-                .build();
-            // Replace method parameters
-            method.getParameters()
-                .clear();
-            method.addParameter(new Parameter(recordType, "record"));
-
-            // Replace method body lines
-            method.getBodyLines()
-                .clear();
-            method.addBodyLine("return DeleteDSL.deleteFromWithMapper(this::delete, " + tableFieldName + ")");
-            method.addBodyLines(fragmentGenerator.getPrimaryKeyWhereClauseForUpdate());
-            method.addBodyLine("        .build()");
-            method.addBodyLine("        .execute();");
-        }
-        return super.clientDeleteByPrimaryKeyMethodGenerated(method, interfaze, introspectedTable);
     }
 
     private void addSelectPageByExampleMethod(Interface interfaze,
@@ -205,23 +165,35 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         }
     }
 
-    private void addExtendsGenericMapper(Interface interfaze,
-        IntrospectedTable introspectedTable,
-        FullyQualifiedJavaType recordType) {
-        List<IntrospectedColumn> pkCloumns = introspectedTable.getPrimaryKeyColumns();
-        String primaryKeyType;
-        if (null == pkCloumns || pkCloumns.isEmpty()) {
-            primaryKeyType = "NoPrimaryKey";
-            interfaze.addImportedType(new FullyQualifiedJavaType("org.shenjia.mybatis.core.NoPrimaryKey"));
-        } else if (pkCloumns.size() > 1) {
-            primaryKeyType = recordType.getShortName();
-        } else {
-            primaryKeyType = pkCloumns.get(0)
-                .getFullyQualifiedJavaType()
-                .getShortName();
-        }
-        interfaze.addImportedType(new FullyQualifiedJavaType("org.shenjia.mybatis.core.GenericMapper"));
-        interfaze.addSuperInterface(
-            new FullyQualifiedJavaType("GenericMapper<" + recordType.getShortName() + ", " + primaryKeyType + ">"));
+    private void generateDaoClassIfNotExsits(Interface mapperInterfaze,
+        TopLevelClass topLevelClass,
+        IntrospectedTable introspectedTable) {
+
+        FullyQualifiedJavaType mapperType = new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper");
+        mapperInterfaze.setVisibility(JavaVisibility.DEFAULT);
+        mapperInterfaze.addJavaDocLine("// Do not modify this file, it will be overwritten when code is generated.");
+        mapperInterfaze.getAnnotations()
+            .clear();
+        Set<FullyQualifiedJavaType> importTypes = mapperInterfaze.getImportedTypes();
+        Set<FullyQualifiedJavaType> newImportTypes = importTypes.stream()
+            .filter(t -> !t.equals(mapperType))
+            .collect(Collectors.toSet());
+        importTypes.clear();
+        importTypes.addAll(newImportTypes);
+
+        String daoType = mapperInterfaze.getType()
+            .getFullyQualifiedName()
+            .replaceFirst("Mapper", "Dao");
+        Interface daoInterface = new Interface(daoType);
+        daoInterface.setVisibility(JavaVisibility.PUBLIC);
+        daoInterface.addSuperInterface(mapperInterfaze.getType());
+        daoInterface.addAnnotation("@Mapper");
+        daoInterface.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper"));
+
+        String targetProject = context.getJavaModelGeneratorConfiguration()
+            .getTargetProject();
+        GeneratedJavaFile daoInterfaceJavaFile = new GeneratedJavaFile(daoInterface, targetProject,
+            context.getJavaFormatter());
+        generatedJavaFiles.add(daoInterfaceJavaFile);
     }
 }

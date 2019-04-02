@@ -44,7 +44,7 @@
 		</javaModelGenerator>
 		<!-- 生成DAO的包名和位置 -->
 		<javaClientGenerator
-			targetPackage="org.shenjia.mybatis.examples.mapper"
+			targetPackage="org.shenjia.mybatis.examples.dao"
 			targetProject="src/main/java" type="ANNOTATEDMAPPER">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>

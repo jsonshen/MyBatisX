@@ -19,7 +19,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedTable;
@@ -159,7 +158,7 @@ public class ExtendableModelPlugin extends PluginAdapter {
 		field.setFinal(true);
 		field.setStatic(true);
 		field.setVisibility(JavaVisibility.PRIVATE);
-		field.setInitializationString(new Random().nextLong() + "L");
+		field.setInitializationString("1L");
 		context.getCommentGenerator().addFieldComment(field, it);
 		return field;
 	}

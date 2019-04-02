@@ -9,16 +9,15 @@
  * limitations under the License.
  */
 
-package org.shenjia.mybatis.examples.mapper;
+package org.shenjia.mybatis.examples.dao;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
-import static org.shenjia.mybatis.examples.mapper.MultiColPkDynamicSqlSupport.*;
+import static org.shenjia.mybatis.examples.dao.MultiColPkDynamicSqlSupport.*;
 
 import java.util.List;
 import javax.annotation.Generated;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Results;
@@ -39,12 +38,11 @@ import org.mybatis.dynamic.sql.update.MyBatis3UpdateModelAdapter;
 import org.mybatis.dynamic.sql.update.UpdateDSL;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
-import org.shenjia.mybatis.core.GenericMapper;
 import org.shenjia.mybatis.examples.entity.MultiColPk;
 import org.shenjia.mybatis.paging.PagingAdapter;
 
-@Mapper
-public interface MultiColPkMapper extends GenericMapper<MultiColPk, MultiColPk> {
+// Do not modify this file, it will be overwritten when code is generated.
+interface MultiColPkMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
     long count(SelectStatementProvider selectStatement);
@@ -88,10 +86,10 @@ public interface MultiColPkMapper extends GenericMapper<MultiColPk, MultiColPk> 
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int deleteByPrimaryKey(MultiColPk record) {
+    default int deleteByPrimaryKey(Integer qqNum_, String realName_) {
         return DeleteDSL.deleteFromWithMapper(this::delete, multiColPk)
-                .where(qqNum, isEqualTo(record::getQqNum))
-                .and(realName, isEqualTo(record::getRealName))
+                .where(qqNum, isEqualTo(qqNum_))
+                .and(realName, isEqualTo(realName_))
                 .build()
                 .execute();
     }
@@ -133,10 +131,10 @@ public interface MultiColPkMapper extends GenericMapper<MultiColPk, MultiColPk> 
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default MultiColPk selectByPrimaryKey(MultiColPk record) {
+    default MultiColPk selectByPrimaryKey(Integer qqNum_, String realName_) {
         return selectOneByExample()
-                .where(qqNum, isEqualTo(record::getQqNum))
-                .and(realName, isEqualTo(record::getRealName))
+                .where(qqNum, isEqualTo(qqNum_))
+                .and(realName, isEqualTo(realName_))
                 .build()
                 .execute();
     }

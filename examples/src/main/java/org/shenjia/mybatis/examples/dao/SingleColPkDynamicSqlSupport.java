@@ -1,28 +1,28 @@
-package org.shenjia.mybatis.examples.mapper;
+package org.shenjia.mybatis.examples.dao;
 
 import java.sql.JDBCType;
 import javax.annotation.Generated;
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 
-public final class MultiColPkDynamicSqlSupport {
+public final class SingleColPkDynamicSqlSupport {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final MultiColPk multiColPk = new MultiColPk();
+    public static final SingleColPk singleColPk = new SingleColPk();
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Integer> qqNum = multiColPk.qqNum;
+    public static final SqlColumn<Integer> qqNum = singleColPk.qqNum;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> realName = multiColPk.realName;
+    public static final SqlColumn<String> realName = singleColPk.realName;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> nickname = multiColPk.nickname;
+    public static final SqlColumn<String> nickname = singleColPk.nickname;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> password = multiColPk.password;
+    public static final SqlColumn<String> password = singleColPk.password;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final class MultiColPk extends SqlTable {
+    public static final class SingleColPk extends SqlTable {
         public final SqlColumn<Integer> qqNum = column("QQ_NUM", JDBCType.INTEGER);
 
         public final SqlColumn<String> realName = column("REAL_NAME", JDBCType.VARCHAR);
@@ -31,8 +31,8 @@ public final class MultiColPkDynamicSqlSupport {
 
         public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
 
-        public MultiColPk() {
-            super("MULTI_COL_PK");
+        public SingleColPk() {
+            super("SINGLE_COL_PK");
         }
     }
 }
