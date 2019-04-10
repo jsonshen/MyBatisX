@@ -180,8 +180,14 @@ interface MultiColPkMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default QueryExpressionDSL<PagingAdapter<List<MultiColPk>>> selectPageByExample(int limit, int offset) {
-        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, this::selectMany, limit, offset), qqNum, realName, nickname, password)
+    default QueryExpressionDSL<PagingAdapter<MultiColPk>> selectRangeByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, null, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
+                .from(multiColPk);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default QueryExpressionDSL<PagingAdapter<MultiColPk>> selectPageByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
                 .from(multiColPk);
     }
 

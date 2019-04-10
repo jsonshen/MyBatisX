@@ -139,8 +139,14 @@ interface NoPkMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default QueryExpressionDSL<PagingAdapter<List<NoPk>>> selectPageByExample(int limit, int offset) {
-        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, this::selectMany, limit, offset), qqNum, realName, nickname, password)
+    default QueryExpressionDSL<PagingAdapter<NoPk>> selectRangeByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, null, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
+                .from(noPk);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default QueryExpressionDSL<PagingAdapter<NoPk>> selectPageByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
                 .from(noPk);
     }
 

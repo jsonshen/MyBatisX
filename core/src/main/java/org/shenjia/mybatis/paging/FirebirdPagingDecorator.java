@@ -10,13 +10,13 @@ public class FirebirdPagingDecorator implements
 
     @Override
     public SelectStatementProvider decorate(SelectStatementProvider delegate,
-        int limit,
-        int offset) {
+        long currentPage,
+        int pageSize) {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.putAll(delegate.getParameters());
-        parameters.put("limit", limit);
-        parameters.put("offset", offset);
+        parameters.put("limit", pageSize);
+        parameters.put("offset", (currentPage - 1) + pageSize);
 
         String oldSql = delegate.getSelectStatement();
         StringBuilder sqlBuf = new StringBuilder(oldSql.length() + 77);

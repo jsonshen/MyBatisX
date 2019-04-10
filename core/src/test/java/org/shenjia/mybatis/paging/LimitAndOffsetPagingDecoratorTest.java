@@ -14,7 +14,7 @@ public class LimitAndOffsetPagingDecoratorTest {
         SelectStatementProvider delegate = new SelectStatementProvider() {
             @Override
             public String getSelectStatement() {
-                return "SELECT * FROM ACL_USER";
+                return "select * from ACL_USER";
             }
 
             @Override
@@ -26,6 +26,6 @@ public class LimitAndOffsetPagingDecoratorTest {
         int offset = 100;
         String newSql = new LimitAndOffsetPagingDecorator().decorate(delegate, limit, offset)
             .getSelectStatement();
-        Assert.assertEquals(newSql, "SELECT * FROM ACL_USER LIMIT #{parameters.limit} OFFSET #{parameters.offset}");
+        Assert.assertEquals(newSql, "select * from ACL_USER limit #{parameters.limit} offset #{parameters.offset}");
     }
 }

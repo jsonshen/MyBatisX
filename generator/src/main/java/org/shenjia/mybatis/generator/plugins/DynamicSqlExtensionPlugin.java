@@ -42,6 +42,7 @@ import org.mybatis.generator.runtime.dynamic.sql.elements.FragmentGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.MethodAndImports;
 import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectOneByExampleMethodGenerator;
 import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectPageByExampleMethodGenerator;
+import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectRangeByExampleMethodGenerator;
 
 /**
  * Dynamic sql extension plugin
@@ -79,6 +80,7 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         // addSelectPageByExampleMethod
         String addSelectPageByExampleMethod = properties.getProperty("addSelectPageByExampleMethod", "true");
         if (StringUtility.isTrue(addSelectPageByExampleMethod)) {
+            addSelectRangeByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
             addSelectPageByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
         }
         // addSelectOneByExampleMethod
@@ -130,6 +132,21 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
             bodyLines.remove(1);
         }
         return super.clientSelectByPrimaryKeyMethodGenerated(method, interfaze, introspectedTable);
+    }
+
+    private void addSelectRangeByExampleMethod(Interface interfaze,
+        IntrospectedTable introspectedTable,
+        FragmentGenerator fragmentGenerator,
+        String tableFieldName,
+        FullyQualifiedJavaType recordType) {
+        SelectRangeByExampleMethodGenerator generator = new SelectRangeByExampleMethodGenerator.Builder()
+            .withContext(context)
+            .withFragmentGenerator(fragmentGenerator)
+            .withIntrospectedTable(introspectedTable)
+            .withTableFieldName(tableFieldName)
+            .withRecordType(recordType)
+            .build();
+        generate(interfaze, generator);
     }
 
     private void addSelectPageByExampleMethod(Interface interfaze,

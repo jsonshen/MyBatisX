@@ -10,13 +10,13 @@ public class OraclePagingDecorator implements
 
     @Override
     public SelectStatementProvider decorate(SelectStatementProvider delegate,
-        int limit,
-        int offset) {
+        long currentPage,
+        int pageSize) {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.putAll(delegate.getParameters());
-        parameters.put("start_row", offset);
-        parameters.put("end_row", offset + limit);
+        parameters.put("start_row", (currentPage - 1) * pageSize);
+        parameters.put("end_row", currentPage * pageSize);
 
         String oldSql = delegate.getSelectStatement();
         StringBuilder sqlBuf = new StringBuilder(oldSql.length() + 143);

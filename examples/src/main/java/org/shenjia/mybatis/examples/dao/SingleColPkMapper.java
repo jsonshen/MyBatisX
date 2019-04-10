@@ -178,8 +178,14 @@ interface SingleColPkMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default QueryExpressionDSL<PagingAdapter<List<SingleColPk>>> selectPageByExample(int limit, int offset) {
-        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, this::selectMany, limit, offset), qqNum, realName, nickname, password)
+    default QueryExpressionDSL<PagingAdapter<SingleColPk>> selectRangeByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, null, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
+                .from(singleColPk);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default QueryExpressionDSL<PagingAdapter<SingleColPk>> selectPageByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
                 .from(singleColPk);
     }
 
