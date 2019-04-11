@@ -40,6 +40,6 @@ public class ExamplesService {
     public Page<MultiColPk> selectPageMultiColPkRecord(Pageable pageable) {
         return multiColPkDao.selectPageByExample(pageable.getCurrentPage(), pageable.getPageSize())
             .build()
-            .executePageQuery();
+            .execute();
     }
 }

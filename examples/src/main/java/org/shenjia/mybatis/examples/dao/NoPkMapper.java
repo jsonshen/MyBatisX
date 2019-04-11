@@ -38,7 +38,8 @@ import org.mybatis.dynamic.sql.update.UpdateDSL;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.shenjia.mybatis.examples.entity.NoPk;
-import org.shenjia.mybatis.paging.PagingAdapter;
+import org.shenjia.mybatis.paging.PageAdapter;
+import org.shenjia.mybatis.paging.RangeAdapter;
 
 // Do not modify this file, it will be overwritten when code is generated.
 interface NoPkMapper {
@@ -139,14 +140,14 @@ interface NoPkMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default QueryExpressionDSL<PagingAdapter<NoPk>> selectRangeByExample(long currentPage, int pageSize) {
-        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, null, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
+    default QueryExpressionDSL<RangeAdapter<NoPk>> selectRangeByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> RangeAdapter.of(selectModel, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
                 .from(noPk);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default QueryExpressionDSL<PagingAdapter<NoPk>> selectPageByExample(long currentPage, int pageSize) {
-        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
+    default QueryExpressionDSL<PageAdapter<NoPk>> selectPageByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> PageAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
                 .from(noPk);
     }
 

@@ -1,10 +1,10 @@
-package org.shenjia.mybatis.paging;
+package org.shenjia.mybatis.sql;
 
-public class PagingException extends RuntimeException {
+public class SqlException extends RuntimeException {
 
     private static final long serialVersionUID = -387511186215032760L;
 
-    public PagingException(String message) {
+    public SqlException(String message) {
         super(message);
     }
 

@@ -7,4 +7,5 @@ public interface PagingDecorator {
     SelectStatementProvider decorate(SelectStatementProvider delegate,
         long currentPage,
         int pageSize);
+    
 }

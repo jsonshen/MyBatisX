@@ -39,7 +39,8 @@ import org.mybatis.dynamic.sql.update.UpdateDSL;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.shenjia.mybatis.examples.entity.SingleColPk;
-import org.shenjia.mybatis.paging.PagingAdapter;
+import org.shenjia.mybatis.paging.PageAdapter;
+import org.shenjia.mybatis.paging.RangeAdapter;
 
 // Do not modify this file, it will be overwritten when code is generated.
 interface SingleColPkMapper {
@@ -178,14 +179,14 @@ interface SingleColPkMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default QueryExpressionDSL<PagingAdapter<SingleColPk>> selectRangeByExample(long currentPage, int pageSize) {
-        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, null, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
+    default QueryExpressionDSL<RangeAdapter<SingleColPk>> selectRangeByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> RangeAdapter.of(selectModel, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
                 .from(singleColPk);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default QueryExpressionDSL<PagingAdapter<SingleColPk>> selectPageByExample(long currentPage, int pageSize) {
-        return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
+    default QueryExpressionDSL<PageAdapter<SingleColPk>> selectPageByExample(long currentPage, int pageSize) {
+        return SelectDSL.select(selectModel -> PageAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
                 .from(singleColPk);
     }
 

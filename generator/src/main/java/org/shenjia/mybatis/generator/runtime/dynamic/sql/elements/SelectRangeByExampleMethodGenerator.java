@@ -35,7 +35,7 @@ public class SelectRangeByExampleMethodGenerator extends AbstractMethodGenerator
 
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.QueryExpressionDSL")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.PagingAdapter")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.RangeAdapter")); //$NON-NLS-1$
         imports.add(FullyQualifiedJavaType.getNewListInstance());
         imports.add(recordType);
         
@@ -45,12 +45,12 @@ public class SelectRangeByExampleMethodGenerator extends AbstractMethodGenerator
         method.addParameter(new Parameter(new FullyQualifiedJavaType("long"), "currentPage"));
         method.addParameter(new Parameter(new FullyQualifiedJavaType("int"), "pageSize"));
         
-        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("QueryExpressionDSL<PagingAdapter<" //$NON-NLS-1$
+        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("QueryExpressionDSL<RangeAdapter<" //$NON-NLS-1$
                 + recordType.getShortNameWithoutTypeArguments()
                 + ">>"); //$NON-NLS-1$
         method.setReturnType(returnType);
         StringBuilder sb = new StringBuilder();
-        sb.append("return SelectDSL.select(selectModel -> PagingAdapter.of(selectModel, null, this::selectMany, currentPage, pageSize), "); //$NON-NLS-1$
+        sb.append("return SelectDSL.select(selectModel -> RangeAdapter.of(selectModel, this::selectMany, currentPage, pageSize), "); //$NON-NLS-1$
         sb.append(fragmentGenerator.getSelectList());
         sb.append(')');
         method.addBodyLine(sb.toString());
