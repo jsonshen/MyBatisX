@@ -3,17 +3,19 @@
   PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
   "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
-	<context id="MyBatisXExamples" targetRuntime="MyBatis3DynamicSql" defaultModelType="conditional">
+	<context id="MyBatisXExamples" targetRuntime="MyBatis3DynamicSql">
 		<plugin type="org.shenjia.mybatis.generator.plugins.JavaCommentPlugin">
 			<property name="licenseCommentFile" value="src/generator/source-file-header.txt" />
 		</plugin>
-		<!-- <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin" /> -->
 		<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin" />
 		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
 		<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
-		<plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin" />
 		<plugin type="org.mybatis.generator.plugins.VirtualPrimaryKeyPlugin" />
-		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicSqlExtensionPlugin" />
+		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicSqlExtensionPlugin">
+			<property name="dynamicSqlSupportSuffix" value="Support" />
+			<property name="addSelectPageByExampleMethod" value="true" />
+			<property name="addSelectOneByExampleMethod" value="true" />
+		</plugin>
 
 		<commentGenerator>
 			<!-- 这个元素用来去除指定生成的注释中是否包含生成的日期 false:表示保护 -->

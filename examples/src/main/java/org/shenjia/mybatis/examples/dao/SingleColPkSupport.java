@@ -5,7 +5,7 @@ import javax.annotation.Generated;
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 
-public final class SingleColPkDynamicSqlSupport {
+public final class SingleColPkSupport {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SingleColPk singleColPk = new SingleColPk();
 

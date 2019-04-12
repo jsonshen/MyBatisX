@@ -11,7 +11,7 @@
 
 package org.shenjia.mybatis.examples.dao;
 
-import static org.shenjia.mybatis.examples.dao.NoPkDynamicSqlSupport.*;
+import static org.shenjia.mybatis.examples.dao.NoPkSupport.*;
 
 import java.util.List;
 import javax.annotation.Generated;

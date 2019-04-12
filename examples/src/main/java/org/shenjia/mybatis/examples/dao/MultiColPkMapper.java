@@ -12,7 +12,7 @@
 package org.shenjia.mybatis.examples.dao;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
-import static org.shenjia.mybatis.examples.dao.MultiColPkDynamicSqlSupport.*;
+import static org.shenjia.mybatis.examples.dao.MultiColPkSupport.*;
 
 import java.util.List;
 import javax.annotation.Generated;

@@ -45,7 +45,7 @@ import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectPageByEx
 import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectRangeByExampleMethodGenerator;
 
 /**
- * Dynamic sql extension plugin
+ * Dynamic SQL extension plugin
  * 
  * @author Jason Shen
  *
@@ -55,8 +55,20 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
     private static final Log LOG = LogFactory.getLog(DynamicSqlExtensionPlugin.class);
     private List<GeneratedJavaFile> generatedJavaFiles = new ArrayList<>();
 
+    @Override
     public boolean validate(List<String> warnings) {
         return true;
+    }
+
+    @Override
+    public void initialized(IntrospectedTable introspectedTable) {
+        String suffix = properties.getProperty("dynamicSqlSupportSuffix");
+        String type = introspectedTable.getMyBatisDynamicSqlSupportType();
+        if (null != suffix && type.endsWith("DynamicSqlSupport")) {
+            String newType = type.substring(0, type.length() - 17) + suffix;
+            introspectedTable.setMyBatisDynamicSqlSupportType(newType);
+        }
+        super.initialized(introspectedTable);
     }
 
     @Override
