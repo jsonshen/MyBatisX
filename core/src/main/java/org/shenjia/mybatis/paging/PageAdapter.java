@@ -50,7 +50,7 @@ public class PageAdapter<R> implements
 
             @Override
             public String getSelectStatement() {
-                return "select count (t.*) from (" + ssp.getSelectStatement() + ") t";
+                return "select count(*) from (" + ssp.getSelectStatement() + ") t";
             }
         });
         Page<R> page = new Page<>(currentPage, pageSize, totalCount);
