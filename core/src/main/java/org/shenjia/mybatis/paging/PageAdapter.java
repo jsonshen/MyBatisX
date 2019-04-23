@@ -13,6 +13,8 @@ import org.shenjia.mybatis.sql.SqlExecutor;
 public class PageAdapter<R> implements
     SqlExecutor<Page<R>> {
 
+    private static final String SQL_FROM_TOKEN = " from ";
+
     private SelectModel selectModel;
     private Function<SelectStatementProvider, Long> countMethod;
     private Function<SelectStatementProvider, List<R>> selectManyMethod;
@@ -50,7 +52,7 @@ public class PageAdapter<R> implements
 
             @Override
             public String getSelectStatement() {
-                return "select count(*) from (" + ssp.getSelectStatement() + ") t";
+                return buildCountSql(ssp.getSelectStatement());
             }
         });
         Page<R> page = new Page<>(currentPage, pageSize, totalCount);
@@ -62,4 +64,11 @@ public class PageAdapter<R> implements
         return page;
     }
 
+    private String buildCountSql(final String selectSql) {
+        int len = selectSql.length();
+        int idx = selectSql.indexOf(SQL_FROM_TOKEN);
+        return new StringBuilder(15 + len - idx).append("select count(*)")
+            .append(selectSql.substring(idx))
+            .toString();
+    }
 }
