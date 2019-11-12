@@ -1,0 +1,1 @@
+mvn clean deploy -pl core,generator -am -Prelease
