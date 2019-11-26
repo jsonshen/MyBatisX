@@ -11,13 +11,13 @@ import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerato
 import org.mybatis.generator.runtime.dynamic.sql.elements.FragmentGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.MethodAndImports;
 
-public class SelectPageByExampleMethodGenerator extends AbstractMethodGenerator {
+public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
 
 	private FullyQualifiedJavaType recordType;
     private String tableFieldName;
     private FragmentGenerator fragmentGenerator;
     
-    private SelectPageByExampleMethodGenerator(Builder builder) {
+    private SelectRangeMethodGenerator(Builder builder) {
         super(builder);
         recordType = builder.recordType;
         tableFieldName = builder.tableFieldName;
@@ -33,28 +33,29 @@ public class SelectPageByExampleMethodGenerator extends AbstractMethodGenerator 
         
         Set<FullyQualifiedJavaType> imports = new HashSet<FullyQualifiedJavaType>();
 
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.QueryExpressionDSL")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.PageAdapter")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.RangeAdapter")); //$NON-NLS-1$
         imports.add(FullyQualifiedJavaType.getNewListInstance());
         imports.add(recordType);
         
-        Method method = new Method("selectPageByExample"); //$NON-NLS-1$
+        Method method = new Method("selectRange"); //$NON-NLS-1$
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
         method.addParameter(new Parameter(new FullyQualifiedJavaType("long"), "currentPage"));
         method.addParameter(new Parameter(new FullyQualifiedJavaType("int"), "pageSize"));
         
-        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("QueryExpressionDSL<PageAdapter<" //$NON-NLS-1$
+        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("List<" //$NON-NLS-1$
                 + recordType.getShortNameWithoutTypeArguments()
-                + ">>"); //$NON-NLS-1$
+                + ">"); //$NON-NLS-1$
         method.setReturnType(returnType);
         StringBuilder sb = new StringBuilder();
-        sb.append("return SelectDSL.select(selectModel -> PageAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), "); //$NON-NLS-1$
+        sb.append("return SelectDSL.select(selectModel -> RangeAdapter.of(selectModel, this::selectMany, currentPage, pageSize), "); //$NON-NLS-1$
         sb.append(fragmentGenerator.getSelectList());
         sb.append(')');
         method.addBodyLine(sb.toString());
-        method.addBodyLine("        .from(" + tableFieldName + ");"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("        .from(" + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("        .build()");
+        method.addBodyLine("        .execute();");
         
         return MethodAndImports.withMethod(method)
                 .withImports(imports)
@@ -66,7 +67,7 @@ public class SelectPageByExampleMethodGenerator extends AbstractMethodGenerator 
         return context.getPlugins().clientSelectByExampleWithBLOBsMethodGenerated(method, interfaze, introspectedTable);
     }
 
-    public static class Builder extends BaseBuilder<Builder, SelectPageByExampleMethodGenerator> {
+    public static class Builder extends BaseBuilder<Builder, SelectRangeMethodGenerator> {
         private FullyQualifiedJavaType recordType;
         private String tableFieldName;
         private FragmentGenerator fragmentGenerator;
@@ -92,8 +93,8 @@ public class SelectPageByExampleMethodGenerator extends AbstractMethodGenerator 
         }
 
         @Override
-        public SelectPageByExampleMethodGenerator build() {
-            return new SelectPageByExampleMethodGenerator(this);
+        public SelectRangeMethodGenerator build() {
+            return new SelectRangeMethodGenerator(this);
         }
     }
 }

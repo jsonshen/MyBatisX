@@ -87,11 +87,10 @@ public class ExtendableModelPlugin extends PluginAdapter {
 			
 			if (generateBuildMethod) {
 				// Add old model class build method
-				Method buildMethod = new Method();
+				Method buildMethod = new Method("T build");
 			    buildMethod.setVisibility(JavaVisibility.PUBLIC);
 			    buildMethod.setReturnType(new FullyQualifiedJavaType("<T extends " + shortName + ">"));
 			    // MPG API BUG
-			    buildMethod.setName("T build");
 			    buildMethod.addBodyLine("return (T)this;");
 			    buildMethod.addAnnotation("@SuppressWarnings(\"unchecked\")");
 			    oldModelClass.addMethod(buildMethod);
@@ -103,10 +102,9 @@ public class ExtendableModelPlugin extends PluginAdapter {
 				if (!oldModelMethod.isConstructor()) {
 					continue;
 				}
-				Method newModelMethod = new Method();
+				Method newModelMethod = new Method(oldModelMethod.getName());
 				newModelMethod.setConstructor(true);
 				newModelMethod.setVisibility(JavaVisibility.PUBLIC);
-				newModelMethod.setName(oldModelMethod.getName());
 				StringBuilder bodyBuf = new StringBuilder("super(");
 				for (Parameter p : oldModelMethod.getParameters()) {
 					newModelMethod.addParameter(p);
@@ -146,22 +144,22 @@ public class ExtendableModelPlugin extends PluginAdapter {
 		return true;
 	}
 	
-	/**
-	 * Build serial version UID
-	 * @param it
-	 * @return
-	 */
-	private org.mybatis.generator.api.dom.java.Field buildSerialVersionUID(IntrospectedTable it) {
-		org.mybatis.generator.api.dom.java.Field field = new org.mybatis.generator.api.dom.java.Field();
-		field.setName("serialVersionUID");
-		field.setType(new FullyQualifiedJavaType("long"));
-		field.setFinal(true);
-		field.setStatic(true);
-		field.setVisibility(JavaVisibility.PRIVATE);
-		field.setInitializationString("1L");
-		context.getCommentGenerator().addFieldComment(field, it);
-		return field;
-	}
+    /**
+     * Build serial version UID
+     * 
+     * @param it
+     * @return
+     */
+    private org.mybatis.generator.api.dom.java.Field buildSerialVersionUID(IntrospectedTable it) {
+        org.mybatis.generator.api.dom.java.Field field = new org.mybatis.generator.api.dom.java.Field(
+                "serialVersionUID", new FullyQualifiedJavaType("long"));
+        field.setFinal(true);
+        field.setStatic(true);
+        field.setVisibility(JavaVisibility.PRIVATE);
+        field.setInitializationString("1L");
+        context.getCommentGenerator().addFieldComment(field, it);
+        return field;
+    }
 	
 	private boolean checkExists(String targetProject, TopLevelClass newModelClass) {
 		String fullName = newModelClass.getType().getFullyQualifiedNameWithoutTypeParameters();

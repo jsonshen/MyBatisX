@@ -38,8 +38,9 @@ public class ExamplesService {
     }
 
     public Page<MultiColPk> selectPageMultiColPkRecord(Pageable pageable) {
-        return multiColPkDao.selectPageByExample(pageable.getCurrentPage(), pageable.getPageSize())
-            .build()
-            .execute();
+//        return multiColPkDao.selectPageByExample(pageable.getCurrentPage(), pageable.getPageSize())
+//            .build()
+//            .execute();
+        return null;
     }
 }

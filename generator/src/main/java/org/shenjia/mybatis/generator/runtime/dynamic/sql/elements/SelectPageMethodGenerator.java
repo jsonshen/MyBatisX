@@ -6,17 +6,18 @@ import java.util.Set;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.FragmentGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.MethodAndImports;
 
-public class SelectOneByExampleMethodGenerator extends AbstractMethodGenerator {
+public class SelectPageMethodGenerator extends AbstractMethodGenerator {
 
 	private FullyQualifiedJavaType recordType;
     private String tableFieldName;
     private FragmentGenerator fragmentGenerator;
     
-    private SelectOneByExampleMethodGenerator(Builder builder) {
+    private SelectPageMethodGenerator(Builder builder) {
         super(builder);
         recordType = builder.recordType;
         tableFieldName = builder.tableFieldName;
@@ -32,26 +33,30 @@ public class SelectOneByExampleMethodGenerator extends AbstractMethodGenerator {
         
         Set<FullyQualifiedJavaType> imports = new HashSet<FullyQualifiedJavaType>();
 
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.QueryExpressionDSL")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.MyBatis3SelectModelAdapter")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.PageAdapter")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.Page")); //$NON-NLS-1$
         imports.add(FullyQualifiedJavaType.getNewListInstance());
         imports.add(recordType);
         
-        Method method = new Method("selectOneByExample"); //$NON-NLS-1$
+        Method method = new Method("selectPage"); //$NON-NLS-1$
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
+        method.addParameter(new Parameter(new FullyQualifiedJavaType("long"), "currentPage"));
+        method.addParameter(new Parameter(new FullyQualifiedJavaType("int"), "pageSize"));
         
-        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("QueryExpressionDSL<MyBatis3SelectModelAdapter<" //$NON-NLS-1$
+        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("Page<" //$NON-NLS-1$
                 + recordType.getShortNameWithoutTypeArguments()
-                + ">>"); //$NON-NLS-1$
+                + ">"); //$NON-NLS-1$
         method.setReturnType(returnType);
         StringBuilder sb = new StringBuilder();
-        sb.append("return SelectDSL.selectWithMapper(this::selectOne, "); //$NON-NLS-1$
+        sb.append("return SelectDSL.select(selectModel -> PageAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), "); //$NON-NLS-1$
         sb.append(fragmentGenerator.getSelectList());
         sb.append(')');
         method.addBodyLine(sb.toString());
-        method.addBodyLine("        .from(" + tableFieldName + ");"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("        .from(" + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("        .build()");
+        method.addBodyLine("        .execute();");
         
         return MethodAndImports.withMethod(method)
                 .withImports(imports)
@@ -63,7 +68,7 @@ public class SelectOneByExampleMethodGenerator extends AbstractMethodGenerator {
         return context.getPlugins().clientSelectByExampleWithBLOBsMethodGenerated(method, interfaze, introspectedTable);
     }
 
-    public static class Builder extends BaseBuilder<Builder, SelectOneByExampleMethodGenerator> {
+    public static class Builder extends BaseBuilder<Builder, SelectPageMethodGenerator> {
         private FullyQualifiedJavaType recordType;
         private String tableFieldName;
         private FragmentGenerator fragmentGenerator;
@@ -89,8 +94,8 @@ public class SelectOneByExampleMethodGenerator extends AbstractMethodGenerator {
         }
 
         @Override
-        public SelectOneByExampleMethodGenerator build() {
-            return new SelectOneByExampleMethodGenerator(this);
+        public SelectPageMethodGenerator build() {
+            return new SelectPageMethodGenerator(this);
         }
     }
 }

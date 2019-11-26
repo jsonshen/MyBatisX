@@ -30,7 +30,6 @@ import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
-import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.exception.ShellException;
 import org.mybatis.generator.internal.DefaultShellCallback;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
@@ -40,9 +39,8 @@ import org.mybatis.generator.logging.LogFactory;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.FragmentGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.MethodAndImports;
-import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectOneByExampleMethodGenerator;
-import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectPageByExampleMethodGenerator;
-import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectRangeByExampleMethodGenerator;
+import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectPageMethodGenerator;
+import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectRangeMethodGenerator;
 
 /**
  * Dynamic SQL extension plugin
@@ -78,7 +76,7 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
 
     @Override
     public boolean clientGenerated(Interface interfaze,
-        TopLevelClass topLevelClass,
+//        TopLevelClass topLevelClass,
         IntrospectedTable introspectedTable) {
         FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
         String resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result"; //$NON-NLS-1$
@@ -88,19 +86,14 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
             .withResultMapId(resultMapId)
             .build();
         // generateDaoClassIfNotExsits
-        generateDaoClassIfNotExsits(interfaze, topLevelClass, introspectedTable);
-        // addSelectPageByExampleMethod
-        String addSelectPageByExampleMethod = properties.getProperty("addSelectPageByExampleMethod", "true");
-        if (StringUtility.isTrue(addSelectPageByExampleMethod)) {
-            addSelectRangeByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
-            addSelectPageByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
+        generateDaoClassIfNotExsits(interfaze, introspectedTable);
+        // addSelectPageMethod
+        String addSelectPageMethod = properties.getProperty("addSelectPageMethod", "true");
+        if (StringUtility.isTrue(addSelectPageMethod)) {
+            addSelectRangeMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
+            addSelectPageMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
         }
-        // addSelectOneByExampleMethod
-        String addSelectOneByExampleMethod = properties.getProperty("addSelectOneByExampleMethod", "true");
-        if (StringUtility.isTrue(addSelectOneByExampleMethod)) {
-            addSelectOneByExampleMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
-        }
-        return super.clientGenerated(interfaze, topLevelClass, introspectedTable);
+        return super.clientGenerated(interfaze, introspectedTable);
     }
 
     @Override
@@ -133,25 +126,12 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         return super.clientBasicSelectManyMethodGenerated(method, interfaze, introspectedTable);
     }
 
-    @Override
-    public boolean clientSelectByPrimaryKeyMethodGenerated(Method method,
-        Interface interfaze,
-        IntrospectedTable introspectedTable) {
-        String addSelectOneByExampleMethod = properties.getProperty("addSelectOneByExampleMethod", "true");
-        if (StringUtility.isTrue(addSelectOneByExampleMethod)) {
-            List<String> bodyLines = method.getBodyLines();
-            bodyLines.set(0, "return selectOneByExample()");
-            bodyLines.remove(1);
-        }
-        return super.clientSelectByPrimaryKeyMethodGenerated(method, interfaze, introspectedTable);
-    }
-
-    private void addSelectRangeByExampleMethod(Interface interfaze,
+    private void addSelectRangeMethod(Interface interfaze,
         IntrospectedTable introspectedTable,
         FragmentGenerator fragmentGenerator,
         String tableFieldName,
         FullyQualifiedJavaType recordType) {
-        SelectRangeByExampleMethodGenerator generator = new SelectRangeByExampleMethodGenerator.Builder()
+        SelectRangeMethodGenerator generator = new SelectRangeMethodGenerator.Builder()
             .withContext(context)
             .withFragmentGenerator(fragmentGenerator)
             .withIntrospectedTable(introspectedTable)
@@ -161,27 +141,12 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         generate(interfaze, generator);
     }
 
-    private void addSelectPageByExampleMethod(Interface interfaze,
+    private void addSelectPageMethod(Interface interfaze,
         IntrospectedTable introspectedTable,
         FragmentGenerator fragmentGenerator,
         String tableFieldName,
         FullyQualifiedJavaType recordType) {
-        SelectPageByExampleMethodGenerator generator = new SelectPageByExampleMethodGenerator.Builder()
-            .withContext(context)
-            .withFragmentGenerator(fragmentGenerator)
-            .withIntrospectedTable(introspectedTable)
-            .withTableFieldName(tableFieldName)
-            .withRecordType(recordType)
-            .build();
-        generate(interfaze, generator);
-    }
-
-    private void addSelectOneByExampleMethod(Interface interfaze,
-        IntrospectedTable introspectedTable,
-        FragmentGenerator fragmentGenerator,
-        String tableFieldName,
-        FullyQualifiedJavaType recordType) {
-        SelectOneByExampleMethodGenerator generator = new SelectOneByExampleMethodGenerator.Builder()
+        SelectPageMethodGenerator generator = new SelectPageMethodGenerator.Builder()
             .withContext(context)
             .withFragmentGenerator(fragmentGenerator)
             .withIntrospectedTable(introspectedTable)
@@ -202,7 +167,6 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
     }
 
     private void generateDaoClassIfNotExsits(Interface mapperInterfaze,
-        TopLevelClass topLevelClass,
         IntrospectedTable introspectedTable) {
 
         FullyQualifiedJavaType mapperType = new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper");

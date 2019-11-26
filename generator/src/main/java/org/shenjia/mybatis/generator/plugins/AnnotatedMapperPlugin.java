@@ -21,7 +21,6 @@ import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
-import org.mybatis.generator.api.dom.java.TopLevelClass;
 
 /**
  * 
@@ -35,12 +34,12 @@ public class AnnotatedMapperPlugin extends PluginAdapter {
 	}
 
 	@Override
-	public boolean clientGenerated(Interface interfaze, TopLevelClass topLevelClass,
+	public boolean clientGenerated(Interface interfaze,
 			IntrospectedTable introspectedTable) {
 		FullyQualifiedJavaType fqjt = new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper");
 		interfaze.addImportedType(fqjt);
 		interfaze.addAnnotation("@Mapper");
-		return super.clientGenerated(interfaze, topLevelClass, introspectedTable);
+		return super.clientGenerated(interfaze, introspectedTable);
 	}
 
 }

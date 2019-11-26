@@ -24,11 +24,10 @@ import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
-import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.Document;
-import org.mybatis.generator.api.dom.xml.Element;
 import org.mybatis.generator.api.dom.xml.TextElement;
+import org.mybatis.generator.api.dom.xml.VisitableElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 
 /**
@@ -50,7 +49,7 @@ public class RenameExamplePlugin extends PluginAdapter {
 	}
 
 	@Override
-	public boolean clientGenerated(Interface interfaze, TopLevelClass topLevelClass,
+	public boolean clientGenerated(Interface interfaze,
 			IntrospectedTable introspectedTable) {
 		for (Method m : interfaze.getMethods()) {
 			if (m.getName().indexOf("Example") < 0) {
@@ -115,8 +114,8 @@ public class RenameExamplePlugin extends PluginAdapter {
 			}
 			newRoot.addAttribute(new Attribute(name, value));
 		}
-		List<Element> oldElements = (List<Element>) oldRoot.getElements();
-		for (Element e : oldElements) {
+		List<VisitableElement> oldElements = oldRoot.getElements();
+		for (VisitableElement e : oldElements) {
 			if (e instanceof TextElement) {
 				newRoot.addElement(e);
 				continue;

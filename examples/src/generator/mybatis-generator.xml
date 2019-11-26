@@ -11,10 +11,9 @@
 		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
 		<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
 		<plugin type="org.mybatis.generator.plugins.VirtualPrimaryKeyPlugin" />
-		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicSqlExtensionPlugin">
+ 		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicSqlExtensionPlugin">
 			<property name="dynamicSqlSupportSuffix" value="Support" />
-			<property name="addSelectPageByExampleMethod" value="true" />
-			<property name="addSelectOneByExampleMethod" value="true" />
+			<property name="addSelectPageMethod" value="true" />
 		</plugin>
 
 		<commentGenerator>
@@ -28,7 +27,7 @@
 		<jdbcConnection driverClass="org.h2.Driver"
 			connectionURL="jdbc:h2:~/MyBatisX/examples" userId="sa" password="">
 		</jdbcConnection>
-		<javaTypeResolver>
+		<javaTypeResolver type="org.shenjia.mybatis.generator.types.MyBatisXJavaTypeResolver">
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 		<!-- 生成模型的包名和位置 -->

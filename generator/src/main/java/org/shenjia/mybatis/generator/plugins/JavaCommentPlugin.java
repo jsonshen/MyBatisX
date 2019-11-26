@@ -64,7 +64,7 @@ public class JavaCommentPlugin extends PluginAdapter {
 	}
 
 	@Override
-	public boolean clientGenerated(Interface interfaze, TopLevelClass topLevelClass,
+	public boolean clientGenerated(Interface interfaze,
 			IntrospectedTable introspectedTable) {
 		if (null != licenseComment) {
 			interfaze.addFileCommentLine(licenseComment);

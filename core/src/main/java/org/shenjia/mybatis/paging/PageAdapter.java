@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import org.mybatis.dynamic.sql.render.RenderingStrategy;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.SelectModel;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.shenjia.mybatis.sql.SqlExecutor;
@@ -43,7 +43,7 @@ public class PageAdapter<R> implements
 
     @Override
     public Page<R> execute() {
-        SelectStatementProvider ssp = selectModel.render(RenderingStrategy.MYBATIS3);
+        SelectStatementProvider ssp = selectModel.render(RenderingStrategies.MYBATIS3);
         Long totalCount = countMethod.apply(new SelectStatementProvider() {
             @Override
             public Map<String, Object> getParameters() {

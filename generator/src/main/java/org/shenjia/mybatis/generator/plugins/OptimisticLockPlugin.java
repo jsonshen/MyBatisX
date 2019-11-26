@@ -16,13 +16,14 @@
 package org.shenjia.mybatis.generator.plugins;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.xml.Attribute;
-import org.mybatis.generator.api.dom.xml.Element;
 import org.mybatis.generator.api.dom.xml.TextElement;
+import org.mybatis.generator.api.dom.xml.VisitableElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.internal.util.StringUtility;
 
@@ -51,14 +52,14 @@ public class OptimisticLockPlugin extends PluginAdapter {
 	@Override
 	public boolean sqlMapUpdateByExampleWithBLOBsElementGenerated(XmlElement element,
 			IntrospectedTable introspectedTable) {
-		IntrospectedColumn ic = introspectedTable.getColumn(lockColumnName);
-		if (null == ic) {
+	    Optional<IntrospectedColumn> ic = introspectedTable.getColumn(lockColumnName);
+		if (!ic.isPresent()) {
 			String tableName = introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime();
 			System.err.println("[" + tableName + "] lock column not exists");
 			return true;
 		}
-		String jp = ic.getJavaProperty();
-		List<Element> elements = element.getElements();
+		String jp = ic.get().getJavaProperty();
+		List<VisitableElement> elements = element.getElements();
 		for (int i = 0; i < elements.size(); i++) {
 			String content = ((TextElement) elements.get(i)).getContent();
 			if (content.indexOf(lockColumnName) > 0) {
@@ -73,17 +74,17 @@ public class OptimisticLockPlugin extends PluginAdapter {
 	public boolean sqlMapUpdateByExampleSelectiveElementGenerated(XmlElement element,
 			IntrospectedTable introspectedTable) {
 		try {
-			IntrospectedColumn ic = introspectedTable.getColumn(lockColumnName);
-			if (null == ic) {
+		    Optional<IntrospectedColumn> ic = introspectedTable.getColumn(lockColumnName);
+			if (!ic.isPresent()) {
 				String tableName = introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime();
 				System.err.println("[" + tableName + "] lock column not exists");
 				return true;
 			}
 
-			List<Element> elements = element.getElements();
+			List<VisitableElement> elements = element.getElements();
 			for (int i = 0; i < elements.size(); i++) {
-				Element oldNode = elements.get(i);
-				if (updateSetNode(oldNode, ic)) {
+			    VisitableElement oldNode = elements.get(i);
+				if (updateSetNode(oldNode, ic.get())) {
 					break;
 				}
 			}
@@ -102,14 +103,14 @@ public class OptimisticLockPlugin extends PluginAdapter {
 	@Override
 	public boolean sqlMapUpdateByPrimaryKeyWithBLOBsElementGenerated(XmlElement element,
 			IntrospectedTable introspectedTable) {
-		IntrospectedColumn ic = introspectedTable.getColumn(lockColumnName);
-		if (null == ic) {
+	    Optional<IntrospectedColumn> ic = introspectedTable.getColumn(lockColumnName);
+		if (!ic.isPresent()) {
 			String tableName = introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime();
 			System.err.println("[" + tableName + "] lock column not exists");
 			return true;
 		}
-		String jp = ic.getJavaProperty();
-		List<Element> elements = element.getElements();
+		String jp = ic.get().getJavaProperty();
+		List<VisitableElement> elements = element.getElements();
 		for (int i = 0; i < elements.size(); i++) {
 			String content = ((TextElement) elements.get(i)).getContent();
 			if (content.indexOf(lockColumnName) > 0) {
@@ -117,7 +118,7 @@ public class OptimisticLockPlugin extends PluginAdapter {
 				continue;
 			}
 			if (content.indexOf("where") >= 0) {
-				elements.set(i, buildWhereElement(content, jp, ic.getJdbcTypeName()));
+				elements.set(i, buildWhereElement(content, jp, ic.get().getJdbcTypeName()));
 				break;
 			}
 		}
@@ -128,18 +129,18 @@ public class OptimisticLockPlugin extends PluginAdapter {
 	public boolean sqlMapUpdateByPrimaryKeySelectiveElementGenerated(XmlElement element,
 			IntrospectedTable introspectedTable) {
 		try {
-			IntrospectedColumn ic = introspectedTable.getColumn(lockColumnName);
-			if (null == ic) {
+		    Optional<IntrospectedColumn> ic = introspectedTable.getColumn(lockColumnName);
+			if (!ic.isPresent()) {
 				String tableName = introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime();
 				System.err.println("[" + tableName + "] lock column not exists");
 				return true;
 			}
 
-			List<Element> elements = element.getElements();
+			List<VisitableElement> elements = element.getElements();
 			for (int i = 0; i < elements.size(); i++) {
-				Element oldNode = elements.get(i);
-				updateSetNode(oldNode, ic);
-				Element newNode = updateWhereNode(oldNode, ic);
+			    VisitableElement oldNode = elements.get(i);
+				updateSetNode(oldNode, ic.get());
+				VisitableElement newNode = updateWhereNode(oldNode, ic.get());
 				if (null != newNode) {
 					elements.set(i, newNode);
 					break;
@@ -152,7 +153,7 @@ public class OptimisticLockPlugin extends PluginAdapter {
 		return true;
 	}
 
-	private boolean updateSetNode(Element element, IntrospectedColumn ic) {
+	private boolean updateSetNode(VisitableElement element, IntrospectedColumn ic) {
 		if (!(element instanceof XmlElement)) {
 			return false;
 		}
@@ -160,7 +161,7 @@ public class OptimisticLockPlugin extends PluginAdapter {
 		if (!"set".equals(xe.getName())) {
 			return false;
 		}
-		for (Element e : xe.getElements()) {
+		for (VisitableElement e : xe.getElements()) {
 			if (!(e instanceof XmlElement)) {
 				continue;
 			}
@@ -173,7 +174,7 @@ public class OptimisticLockPlugin extends PluginAdapter {
 				if (a.getValue().indexOf(jp) < 0) {
 					continue;
 				}
-				List<Element> elements = setNode.getElements();
+				List<VisitableElement> elements = setNode.getElements();
 				String content = ((TextElement) elements.get(0)).getContent();
 				elements.set(0, new TextElement(content.replaceAll(jp, jp + " + 1")));
 				return true;
@@ -182,7 +183,7 @@ public class OptimisticLockPlugin extends PluginAdapter {
 		return false;
 	}
 
-	private Element updateWhereNode(Element element, IntrospectedColumn ic) {
+	private VisitableElement updateWhereNode(VisitableElement element, IntrospectedColumn ic) {
 		if (!(element instanceof TextElement)) {
 			return null;
 		}
