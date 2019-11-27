@@ -1,5 +1,7 @@
 package org.shenjia.mybatis.examples;
 
+import java.util.List;
+
 import org.shenjia.mybatis.examples.entity.MultiColPk;
 import org.shenjia.mybatis.examples.entity.NoPk;
 import org.shenjia.mybatis.examples.entity.SingleColPk;
@@ -8,6 +10,8 @@ import org.shenjia.mybatis.paging.MySQLPagingDecorator;
 import org.shenjia.mybatis.paging.Page;
 import org.shenjia.mybatis.paging.Pageable;
 import org.shenjia.mybatis.paging.PagingDecorator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,6 +20,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ExamplesApplication implements
     CommandLineRunner {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ExamplesApplication.class);
 
     @Autowired
     private ExamplesService examplesService;
@@ -27,11 +33,13 @@ public class ExamplesApplication implements
     @Override
     public void run(String... args) throws Exception {
         System.setProperty(PagingDecorator.class.getName(), MySQLPagingDecorator.class.getName());
-        System.out.println("Run Examples Application......");
+        LOG.info("---- Run Examples Application......");
         insertNoPkRecord();
         insertSingleColPkRecord();
         insertMultiColPkRecord();
-        System.out.println("The End.");
+        selectPageMultiColPkRecord(); 
+        selectRangeMultiColPkRecord();
+        LOG.info("---- The End.");
     }
 
     public void insertNoPkRecord() {
@@ -41,10 +49,7 @@ public class ExamplesApplication implements
         record.setNickname("Nick name");
         record.setPassword("password");
         int count = examplesService.insertNoPkRecord(record);
-        System.out.println("insertNoPkRecord: " + count);
-        Page<MultiColPk> page = examplesService.selectPageMultiColPkRecord(new Pageable(1, 10));
-        System.out.println("page.totalCount: " + page.getTotalCount());
-        System.out.println("page.Data:" + page.getData());
+        LOG.info("---- insertNoPkRecord: " + count);
     }
 
     public void insertSingleColPkRecord() {
@@ -54,7 +59,7 @@ public class ExamplesApplication implements
         record.setNickname("Nick name");
         record.setPassword("password");
         int count = examplesService.insertSingleColPkRecord(record);
-        System.out.println("insertSingleColPkRecord: " + count);
+        LOG.info("---- insertSingleColPkRecord: " + count);
     }
 
     public void insertMultiColPkRecord() {
@@ -64,6 +69,17 @@ public class ExamplesApplication implements
         record.setNickname("Nick name");
         record.setPassword("password");
         int count = examplesService.insertMultiColPkRecord(record);
-        System.out.println("insertMultiColPkRecord: " + count);
+        LOG.info("---- insertMultiColPkRecord: " + count);
+    }
+    
+    public void selectPageMultiColPkRecord() {
+        Page<MultiColPk> page = examplesService.selectPageMultiColPkRecord(new Pageable(1, 10));
+        LOG.info("---- page.totalCount: " + page.getTotalCount());
+        LOG.info("---- page.Data:" + page.getData());
+    }
+    
+    public void selectRangeMultiColPkRecord() {
+        List<MultiColPk> range = examplesService.selectRangeMultiColPkRecord(new Pageable(1, 10));
+        LOG.info("---- range.totalCount: " + range.size());
     }
 }

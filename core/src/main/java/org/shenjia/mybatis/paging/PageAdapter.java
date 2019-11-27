@@ -13,8 +13,6 @@ import org.shenjia.mybatis.sql.SqlExecutor;
 public class PageAdapter<R> implements
     SqlExecutor<Page<R>> {
 
-    private static final String SQL_FROM_TOKEN = " from ";
-
     private SelectModel selectModel;
     private Function<SelectStatementProvider, Long> countMethod;
     private Function<SelectStatementProvider, List<R>> selectManyMethod;
@@ -65,10 +63,9 @@ public class PageAdapter<R> implements
     }
 
     private String buildCountSql(final String selectSql) {
-        int len = selectSql.length();
-        int idx = selectSql.indexOf(SQL_FROM_TOKEN);
-        return new StringBuilder(15 + len - idx).append("select count(*)")
-            .append(selectSql.substring(idx))
+        return new StringBuilder(23 + selectSql.length()).append("select count(1) from (")
+            .append(selectSql)
+            .append(") t")
             .toString();
     }
 }

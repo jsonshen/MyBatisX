@@ -1,5 +1,7 @@
 package org.shenjia.mybatis.examples.service;
 
+import java.util.List;
+
 import org.shenjia.mybatis.examples.dao.MultiColPkDao;
 import org.shenjia.mybatis.examples.dao.NoPkDao;
 import org.shenjia.mybatis.examples.dao.SingleColPkDao;
@@ -38,9 +40,10 @@ public class ExamplesService {
     }
 
     public Page<MultiColPk> selectPageMultiColPkRecord(Pageable pageable) {
-//        return multiColPkDao.selectPageByExample(pageable.getCurrentPage(), pageable.getPageSize())
-//            .build()
-//            .execute();
-        return null;
+        return multiColPkDao.selectPage(pageable.getCurrentPage(), pageable.getPageSize());
+    }
+    
+    public List<MultiColPk> selectRangeMultiColPkRecord(Pageable pageable) {
+        return multiColPkDao.selectRange(pageable.getCurrentPage(), pageable.getPageSize());
     }
 }
