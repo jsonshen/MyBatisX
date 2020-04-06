@@ -19,7 +19,7 @@ public class IsNullOrEqualTo<T> extends AbstractSingleValueCondition<T> {
     @Override
     public String renderCondition(String columnName,
         String placeholder) {
-        return "(" + columnName + " IS NULL OR " + columnName + " = " + placeholder + ")";
+        return "(" + columnName + " is null or " + columnName + " = " + placeholder + ")";
     }
 
 }
