@@ -34,6 +34,7 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
         Set<FullyQualifiedJavaType> imports = new HashSet<FullyQualifiedJavaType>();
 
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.where.WhereApplier")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.RangeAdapter")); //$NON-NLS-1$
         imports.add(FullyQualifiedJavaType.getNewListInstance());
         imports.add(recordType);
@@ -41,6 +42,7 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
         Method method = new Method("selectRange"); //$NON-NLS-1$
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
+        method.addParameter(new Parameter(new FullyQualifiedJavaType("WhereApplier"), "where"));
         method.addParameter(new Parameter(new FullyQualifiedJavaType("long"), "currentPage"));
         method.addParameter(new Parameter(new FullyQualifiedJavaType("int"), "pageSize"));
         
@@ -54,6 +56,7 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
         sb.append(')');
         method.addBodyLine(sb.toString());
         method.addBodyLine("        .from(" + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("        .applyWhere(where)"); //$NON-NLS-1$ //$NON-NLS-2$
         method.addBodyLine("        .build()");
         method.addBodyLine("        .execute();");
         
