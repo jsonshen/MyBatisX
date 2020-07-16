@@ -33,6 +33,7 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
         
         Set<FullyQualifiedJavaType> imports = new HashSet<FullyQualifiedJavaType>();
 
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SortSpecification")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.where.WhereApplier")); //$NON-NLS-1$
         imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.RangeAdapter")); //$NON-NLS-1$
@@ -42,9 +43,10 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
         Method method = new Method("selectRange"); //$NON-NLS-1$
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
-        method.addParameter(new Parameter(new FullyQualifiedJavaType("WhereApplier"), "where"));
         method.addParameter(new Parameter(new FullyQualifiedJavaType("long"), "currentPage"));
         method.addParameter(new Parameter(new FullyQualifiedJavaType("int"), "pageSize"));
+        method.addParameter(new Parameter(new FullyQualifiedJavaType("WhereApplier"), "where"));
+        method.addParameter(new Parameter(new FullyQualifiedJavaType("SortSpecification..."), "columns"));
         
         FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("List<" //$NON-NLS-1$
                 + recordType.getShortNameWithoutTypeArguments()
@@ -57,6 +59,7 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
         method.addBodyLine(sb.toString());
         method.addBodyLine("        .from(" + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         method.addBodyLine("        .applyWhere(where)"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("        .orderBy(columns)"); //$NON-NLS-1$ //$NON-NLS-2$
         method.addBodyLine("        .build()");
         method.addBodyLine("        .execute();");
         
