@@ -20,9 +20,13 @@ public class BeanRowMapper<T> implements RowMapper<T> {
     private Class<T> beanClass;
     private Map<String, Method> methodMap;
 
-    public BeanRowMapper(Class<T> entityClass) {
-        this.beanClass = entityClass;
-        this.methodMap = getMehtodMap(entityClass);
+    public BeanRowMapper(Class<T> beanClass) {
+        this.beanClass = beanClass;
+        this.methodMap = getMehtodMap(beanClass);
+    }
+    
+    public static <R> BeanRowMapper<R> of(Class<R> beanClass) {
+        return new BeanRowMapper<R>(beanClass);
     }
 
     @Override
