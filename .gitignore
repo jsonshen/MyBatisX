@@ -13,3 +13,4 @@ dmp/
 .project
 .DS_Store
 *.class
+.factorypath

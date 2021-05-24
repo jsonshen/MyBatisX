@@ -133,22 +133,22 @@ public class DynamicSqlJdbcTemplate {
 
     public <T> int insert(InsertModel<T> insertModel) {
         InsertStatementProvider<T> provider = insertModel.render(SPRING_NAMED_PARAMETER);
-        SqlParameterSource parameters = new BeanPropertySqlParameterSource(provider.getRecord());
+        SqlParameterSource parameters = new BeanPropertySqlParameterSource(provider.getRow());
         return jdbcTemplate.update(provider.getInsertStatement(), parameters);
     }
 
     public <T> int[] batchInsert(BatchInsertModel<T> insertModel,
-        List<T> records) {
+        List<T> rows) {
         BatchInsert<T> provider = insertModel.render(SPRING_NAMED_PARAMETER);
-        SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(records.toArray());
+        SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(rows.toArray());
         return jdbcTemplate.batchUpdate(provider.getInsertStatementSQL(), batch);
     }
 
     @SafeVarargs
     public final <T> int[] batchInsert(BatchInsertModel<T> insertModel,
-        T... records) {
+        T... rows) {
         BatchInsert<T> provider = insertModel.render(SPRING_NAMED_PARAMETER);
-        SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(records);
+        SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(rows);
         return jdbcTemplate.batchUpdate(provider.getInsertStatementSQL(), batch);
     }
 }
