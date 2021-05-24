@@ -5,8 +5,6 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
 import java.sql.JDBCType;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
@@ -36,22 +34,17 @@ public class SqlBuilderTest {
     }
     
     static final class Support {
-        @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    	
         public static final SingleColPk singleColPk = new SingleColPk();
 
-        @Generated("org.mybatis.generator.api.MyBatisGenerator")
         public static final SqlColumn<Integer> qqNum = singleColPk.qqNum;
 
-        @Generated("org.mybatis.generator.api.MyBatisGenerator")
         public static final SqlColumn<String> realName = singleColPk.realName;
 
-        @Generated("org.mybatis.generator.api.MyBatisGenerator")
         public static final SqlColumn<String> nickname = singleColPk.nickname;
 
-        @Generated("org.mybatis.generator.api.MyBatisGenerator")
         public static final SqlColumn<String> password = singleColPk.password;
 
-        @Generated("org.mybatis.generator.api.MyBatisGenerator")
         public static final class SingleColPk extends SqlTable {
             public final SqlColumn<Integer> qqNum = column("QQ_NUM", JDBCType.INTEGER);
 
