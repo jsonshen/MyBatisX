@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.shenjia</groupId>
 	<artifactId>MyBatisX</artifactId>
-	<version>1.3.6</version>
+	<version>${revision}</version>
 	<name>MyBatisX</name>
 	<description>A MyBatis extension library</description>
 	<url>https://github.com/jsonshen/MyBatisX</url>
@@ -18,6 +18,7 @@
 	</modules>
 
 	<properties>
+		<revision>1.3.7</revision>
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
@@ -25,7 +26,6 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<mybatis-dynamic-sql.version>1.3.0</mybatis-dynamic-sql.version>
 		<mybatis-generator.version>1.4.0</mybatis-generator.version>
-		<mybatisx.version>1.3.6</mybatisx.version>
 	</properties>
 
 	<developers>
@@ -50,11 +50,11 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>maven-central-repo</id>
+			<id>OSSRH</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>
-			<id>maven-central-repo</id>
+			<id>OSSRH</id>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 	</distributionManagement>
@@ -110,7 +110,7 @@
 						<version>1.6.8</version>
 						<extensions>true</extensions>
 						<configuration>
-							<serverId>maven-central-repo</serverId>
+							<serverId>OSSRH</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>

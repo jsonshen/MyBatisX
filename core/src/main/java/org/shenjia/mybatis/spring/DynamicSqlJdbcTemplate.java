@@ -16,6 +16,7 @@ import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.mybatis.dynamic.sql.update.UpdateModel;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.shenjia.mybatis.sql.SqlDecorator;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -29,6 +30,22 @@ public class DynamicSqlJdbcTemplate {
 
     public DynamicSqlJdbcTemplate(NamedParameterJdbcOperations namedParameterJdbcOperations) {
         this.jdbcTemplate = namedParameterJdbcOperations;
+    }
+    
+    public <R> R query(SelectModel selectModel,
+        ResultSetExtractor<R> rse) {
+        return query(selectModel, null, rse);
+    }
+    
+    public <R> R query(SelectModel selectModel,
+        SqlDecorator decorator,
+        ResultSetExtractor<R> rse) {
+        SelectStatementProvider provider = selectModel.render(SPRING_NAMED_PARAMETER);
+        if (null != decorator) {
+            provider = decorator.buildSelect(provider);
+        }
+        SqlParameterSource parameters = new MapSqlParameterSource(provider.getParameters());
+        return jdbcTemplate.query(provider.getSelectStatement(), parameters, rse);
     }
     
     public <R> List<R> query(SelectModel selectModel,

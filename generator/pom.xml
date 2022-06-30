@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.shenjia</groupId>
 		<artifactId>MyBatisX</artifactId>
-		<version>1.3.6</version>
+		<version>${revision}</version>
 	</parent>
 	<artifactId>mybatisx-generator</artifactId>
 	
@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>org.shenjia</groupId>
 			<artifactId>mybatisx-core</artifactId>
-			<version>${mybatisx.version}</version>
+			<version>${revision}</version>
 		</dependency>
 
 		<dependency>
