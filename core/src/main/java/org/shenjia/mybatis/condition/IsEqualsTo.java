@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.mybatis.dynamic.sql.AbstractListValueCondition;
-import org.mybatis.dynamic.sql.Callback;
+import org.shenjia.mybatis.util.Strings;
 
 public class IsEqualsTo<T> extends AbstractListValueCondition<T> {
 	
@@ -23,25 +23,15 @@ public class IsEqualsTo<T> extends AbstractListValueCondition<T> {
         super(values);
     }
 
-    public IsEqualsTo(Collection<T> values, Callback emptyCallback) {
-		super(values, emptyCallback);
-	}
-
 	@Override
-    public String renderCondition(String columnName,
-        Stream<String> placeholders) {
-        return placeholders.map(placeholder -> columnName + " = " + placeholder)
-            .collect(Collectors.joining(" or ", "(", ")"));
-    }
+	public String renderCondition(String columnName, Stream<String> placeholders) {
+		return placeholders.map(placeholder -> Strings.join(columnName, " = ", placeholder))
+		    .collect(Collectors.joining(" or ", "(", ")"));
+	}
 
 	@Override
 	public AbstractListValueCondition<T> filter(Predicate<? super T> predicate) {
 		return filterSupport(predicate, IsEqualsTo::new, this, IsEqualsTo::empty);
-	}
-
-	@Override
-	public AbstractListValueCondition<T> withListEmptyCallback(Callback callback) {
-		return new IsEqualsTo<>(values, callback);
 	}
 
 	@SafeVarargs

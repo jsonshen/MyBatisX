@@ -24,11 +24,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
-public class DynamicSqlJdbcTemplate {
+public class DsqlJdbcTemplate {
 
     private NamedParameterJdbcOperations jdbcTemplate;
 
-    public DynamicSqlJdbcTemplate(NamedParameterJdbcOperations namedParameterJdbcOperations) {
+    public DsqlJdbcTemplate(NamedParameterJdbcOperations namedParameterJdbcOperations) {
         this.jdbcTemplate = namedParameterJdbcOperations;
     }
     

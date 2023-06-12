@@ -1,10 +1,9 @@
 package org.shenjia.mybatis.condition;
 
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.mybatis.dynamic.sql.AbstractSingleValueCondition;
+import org.shenjia.mybatis.util.Strings;
 
 public class IsNullOrEqualTo<T> extends AbstractSingleValueCondition<T> {
 	
@@ -26,8 +25,7 @@ public class IsNullOrEqualTo<T> extends AbstractSingleValueCondition<T> {
 
 	@Override
 	public String renderCondition(String columnName, String placeholder) {
-		return Stream.of("(", columnName, " is null or ", columnName, "=", placeholder, ")")
-				.collect(Collectors.joining());
+		return Strings.join("(", columnName, " is null or ", columnName, "=", placeholder, ")");
 	}
 
 	@Override

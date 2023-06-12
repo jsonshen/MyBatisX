@@ -73,7 +73,7 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
         return context.getPlugins().clientSelectByExampleWithBLOBsMethodGenerated(method, interfaze, introspectedTable);
     }
 
-    public static class Builder extends BaseBuilder<Builder, SelectRangeMethodGenerator> {
+    public static class Builder extends BaseBuilder<Builder> {
         private FullyQualifiedJavaType recordType;
         private String tableFieldName;
         private FragmentGenerator fragmentGenerator;
@@ -97,8 +97,7 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
         public Builder getThis() {
             return this;
         }
-
-        @Override
+        
         public SelectRangeMethodGenerator build() {
             return new SelectRangeMethodGenerator(this);
         }

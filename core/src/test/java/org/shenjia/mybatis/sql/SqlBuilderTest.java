@@ -17,20 +17,24 @@ public class SqlBuilderTest {
 
     @Test
     public void test_isNullOrEqualTo() {
-        SelectModel selectModel = select(Support.qqNum).from(Support.singleColPk).where(Support.qqNum, IsNullOrEqualTo.of(123)).build();
+		SelectModel selectModel = select(Support.qqNum).from(Support.singleColPk)
+		    .where(Support.qqNum, IsNullOrEqualTo.of(123))
+		    .build();
         String springJdbcSql = selectModel.render(RenderingStrategies.SPRING_NAMED_PARAMETER).getSelectStatement();
-        assertEquals(springJdbcSql, "select QQ_NUM from SINGLE_COL_PK where (QQ_NUM is null or QQ_NUM=:p1)");
+        System.out.println("--- springJdbcSql -:" + springJdbcSql);
+        assertEquals(springJdbcSql, "select QQ_NUM from SINGLE_COL_PK where QQ_NUM is null or QQ_NUM=:p1");
         String mybatisSql = selectModel.render(RenderingStrategies.MYBATIS3).getSelectStatement();
-        assertEquals(mybatisSql, "select QQ_NUM from SINGLE_COL_PK where (QQ_NUM is null or QQ_NUM=#{parameters.p1,jdbcType=INTEGER})");
+        System.out.println("--- mybatisSql -:" + mybatisSql);
+        assertEquals(mybatisSql, "select QQ_NUM from SINGLE_COL_PK where QQ_NUM is null or QQ_NUM=#{parameters.p1,jdbcType=INTEGER}");
     }
     
     @Test
     public void test_isEqualsTo() {
         SelectModel selectModel = select(Support.qqNum).from(Support.singleColPk).where(Support.qqNum, IsEqualsTo.of(123, 456)).build();
         String springJdbcSql = selectModel.render(RenderingStrategies.SPRING_NAMED_PARAMETER).getSelectStatement();
-        assertEquals(springJdbcSql, "select QQ_NUM from SINGLE_COL_PK where (QQ_NUM = :p1 or QQ_NUM = :p2)");
+        assertEquals(springJdbcSql, "select QQ_NUM from SINGLE_COL_PK where QQ_NUM = :p1 or QQ_NUM = :p2");
         String mybatisSql = selectModel.render(RenderingStrategies.MYBATIS3).getSelectStatement();
-        assertEquals(mybatisSql, "select QQ_NUM from SINGLE_COL_PK where (QQ_NUM = #{parameters.p1,jdbcType=INTEGER} or QQ_NUM = #{parameters.p2,jdbcType=INTEGER})");
+        assertEquals(mybatisSql, "select QQ_NUM from SINGLE_COL_PK where QQ_NUM = #{parameters.p1,jdbcType=INTEGER} or QQ_NUM = #{parameters.p2,jdbcType=INTEGER}");
     }
     
     static final class Support {

@@ -1,18 +1,16 @@
 package org.shenjia.mybatis.examples.service;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.shenjia.mybatis.examples.ExamplesApplication;
 import org.shenjia.mybatis.examples.entity.MultiColPk;
 import org.shenjia.mybatis.examples.entity.NoPk;
 import org.shenjia.mybatis.examples.entity.SingleColPk;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = ExamplesServiceTests.class)
+@SpringBootTest(classes = ExamplesApplication.class)
 public class ExamplesServiceTests {
 
     @Autowired
@@ -26,7 +24,7 @@ public class ExamplesServiceTests {
         record.setNickname("Nick name");
         record.setPassword("password");
         int count = examplesService.insertNoPkRecord(record);
-        Assert.assertEquals(count, 1);
+        Assertions.assertEquals(count, 1);
     }
     
     @Test
@@ -37,7 +35,7 @@ public class ExamplesServiceTests {
         record.setNickname("Nick name");
         record.setPassword("password");
         int count = examplesService.insertSingleColPkRecord(record);
-        Assert.assertEquals(count, 1);
+        Assertions.assertEquals(count, 1);
     }
     
     @Test
@@ -48,7 +46,7 @@ public class ExamplesServiceTests {
         record.setNickname("Nick name");
         record.setPassword("password");
         int count = examplesService.insertMultiColPkRecord(record);
-        Assert.assertEquals(count, 1);
+        Assertions.assertEquals(count, 1);
     }
     
 }
