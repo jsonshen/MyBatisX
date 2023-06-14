@@ -28,8 +28,6 @@ import org.mybatis.generator.api.ShellCallback;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
-import org.mybatis.generator.api.dom.java.Method;
-import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.exception.ShellException;
 import org.mybatis.generator.internal.DefaultShellCallback;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
@@ -94,36 +92,6 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
             addSelectPageMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
         }
         return super.clientGenerated(interfaze, introspectedTable);
-    }
-
-    @Override
-    public boolean clientBasicSelectManyMethodGenerated(Method method,
-        Interface interfaze,
-        IntrospectedTable introspectedTable) {
-        boolean haveSelectOne = false;
-        for (Method m : interfaze.getMethods()) {
-            if ("selectOne".equals(m.getName())) {
-                haveSelectOne = true;
-                break;
-            }
-        }
-        if (!haveSelectOne) {
-            FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
-            FullyQualifiedJavaType returnType = new FullyQualifiedJavaType(
-                recordType.getShortNameWithoutTypeArguments());
-            Method m = new Method("selectOne");
-            for (Parameter p : method.getParameters()) {
-                m.addParameter(p);
-            }
-            m.addAnnotation("@Generated(\"org.mybatis.generator.api.MyBatisGenerator\")");
-            m.addAnnotation("@SelectProvider(type=SqlProviderAdapter.class, method=\"select\")");
-            m.addAnnotation("@ResultMap(\"" + recordType.getShortNameWithoutTypeArguments() + "Result\")");
-            m.addBodyLines(method.getBodyLines());
-            m.setReturnType(returnType);
-            interfaze.addMethod(m);
-            interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.ResultMap"));
-        }
-        return super.clientBasicSelectManyMethodGenerated(method, interfaze, introspectedTable);
     }
 
     private void addSelectRangeMethod(Interface interfaze,
