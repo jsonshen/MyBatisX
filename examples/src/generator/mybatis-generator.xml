@@ -3,6 +3,8 @@
   PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
   "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
+	<properties url="file:./src/generator/jdbc.properties" />
+	
 	<context id="MyBatisXExamples" targetRuntime="MyBatis3DynamicSql">
 		<plugin type="org.shenjia.mybatis.generator.plugins.JavaCommentPlugin">
 			<property name="licenseCommentFile" value="src/generator/source-file-header.txt" />
@@ -14,7 +16,9 @@
  		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicSqlExtensionPlugin">
 			<property name="dynamicSqlSupportSuffix" value="Support" />
 			<property name="addSelectPageMethod" value="true" />
+			<property name="addSelectRangeMethod" value="true" />
 		</plugin>
+		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicTableNamePlugin" />
 
 		<commentGenerator>
 			<!-- 这个元素用来去除指定生成的注释中是否包含生成的日期 false:表示保护 -->
@@ -24,9 +28,8 @@
 			<property name="suppressAllComments" value="true" />
 		</commentGenerator>
 		<!--数据库链接URL，用户名、密码 -->
-		<jdbcConnection driverClass="org.h2.Driver"
-			connectionURL="jdbc:h2:~/MyBatisX/examples" userId="sa" password="">
-		</jdbcConnection>
+		<jdbcConnection driverClass="${driver}"
+			connectionURL="${url}" userId="${username}" password="${password}" />
 		<javaTypeResolver type="org.shenjia.mybatis.generator.types.MyBatisXJavaTypeResolver">
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>

@@ -37,8 +37,8 @@ import org.mybatis.generator.logging.LogFactory;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.FragmentGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.MethodAndImports;
-import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectPageMethodGenerator;
-import org.shenjia.mybatis.generator.runtime.dynamic.sql.elements.SelectRangeMethodGenerator;
+import org.shenjia.mybatis.generator.runtime.dynamicsql.SelectPageMethodGenerator;
+import org.shenjia.mybatis.generator.runtime.dynamicsql.SelectRangeMethodGenerator;
 
 /**
  * Dynamic SQL extension plugin
@@ -86,10 +86,11 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         // generateDaoClassIfNotExsits
         generateDaoClassIfNotExsits(interfaze, introspectedTable);
         // addSelectPageMethod
-        String addSelectPageMethod = properties.getProperty("addSelectPageMethod", "true");
-        if (StringUtility.isTrue(addSelectPageMethod)) {
-            addSelectRangeMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
+        if (StringUtility.isTrue(properties.getProperty("addSelectPageMethod", "true"))) {
             addSelectPageMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
+        }
+        if (StringUtility.isTrue(properties.getProperty("addSelectRangeMethod", "true"))) {
+            addSelectRangeMethod(interfaze, introspectedTable, fragmentGenerator, tableFieldName, recordType);
         }
         return super.clientGenerated(interfaze, introspectedTable);
     }

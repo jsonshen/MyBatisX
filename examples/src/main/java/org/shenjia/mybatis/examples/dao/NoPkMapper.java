@@ -13,63 +13,44 @@ package org.shenjia.mybatis.examples.dao;
 
 import static org.shenjia.mybatis.examples.dao.NoPkSupport.*;
 
+import jakarta.annotation.Generated;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Generated;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.InsertProvider;
+import java.util.function.Function;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.dynamic.sql.BasicColumn;
+import org.mybatis.dynamic.sql.SortSpecification;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
-import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider;
-import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider;
-import org.mybatis.dynamic.sql.insert.render.MultiRowInsertStatementProvider;
 import org.mybatis.dynamic.sql.select.CountDSLCompleter;
+import org.mybatis.dynamic.sql.select.QueryExpressionDSL;
 import org.mybatis.dynamic.sql.select.SelectDSL;
 import org.mybatis.dynamic.sql.select.SelectDSLCompleter;
+import org.mybatis.dynamic.sql.select.SelectModel;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.mybatis.dynamic.sql.update.UpdateDSL;
 import org.mybatis.dynamic.sql.update.UpdateDSLCompleter;
 import org.mybatis.dynamic.sql.update.UpdateModel;
-import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
+import org.mybatis.dynamic.sql.util.mybatis3.CommonCountMapper;
+import org.mybatis.dynamic.sql.util.mybatis3.CommonDeleteMapper;
+import org.mybatis.dynamic.sql.util.mybatis3.CommonInsertMapper;
+import org.mybatis.dynamic.sql.util.mybatis3.CommonUpdateMapper;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
+import org.mybatis.dynamic.sql.where.WhereApplier;
 import org.shenjia.mybatis.examples.entity.NoPk;
 import org.shenjia.mybatis.paging.Page;
 import org.shenjia.mybatis.paging.PageAdapter;
 import org.shenjia.mybatis.paging.RangeAdapter;
 
 // Do not modify this file, it will be overwritten when code is generated.
-interface NoPkMapper {
+interface NoPkMapper extends CommonCountMapper, CommonDeleteMapper, CommonInsertMapper<NoPk>, CommonUpdateMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     BasicColumn[] selectList = BasicColumn.columnList(qqNum, realName, nickname, password);
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    long count(SelectStatementProvider selectStatement);
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
-    int delete(DeleteStatementProvider deleteStatement);
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insert")
-    int insert(InsertStatementProvider<NoPk> insertStatement);
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<NoPk> multipleInsertStatement);
-
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @ResultMap("NoPkResult")
-    Optional<NoPk> selectOne(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -82,22 +63,38 @@ interface NoPkMapper {
     List<NoPk> selectMany(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    @UpdateProvider(type=SqlProviderAdapter.class, method="update")
-    int update(UpdateStatementProvider updateStatement);
+    @SelectProvider(type=SqlProviderAdapter.class, method="select")
+    @ResultMap("NoPkResult")
+    Optional<NoPk> selectOne(SelectStatementProvider selectStatement);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default long count(CountDSLCompleter completer) {
-        return MyBatis3Utils.countFrom(this::count, noPk, completer);
+        return count(null, completer);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default long count(String tableName, CountDSLCompleter completer) {
+        return MyBatis3Utils.countFrom(this::count, null == tableName ? noPk : noPk.withName(tableName), completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int delete(DeleteDSLCompleter completer) {
-        return MyBatis3Utils.deleteFrom(this::delete, noPk, completer);
+        return delete(null, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insert(NoPk record) {
-        return MyBatis3Utils.insert(this::insert, record, noPk, c ->
+    default int delete(String tableName, DeleteDSLCompleter completer) {
+        return MyBatis3Utils.deleteFrom(this::delete, null == tableName ? noPk : noPk.withName(tableName), completer);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int insert(NoPk row) {
+        return insert(null, row);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int insert(String tableName, NoPk row) {
+        return MyBatis3Utils.insert(this::insert, row, null == tableName ? noPk : noPk.withName(tableName), c ->
             c.map(qqNum).toProperty("qqNum")
             .map(realName).toProperty("realName")
             .map(nickname).toProperty("nickname")
@@ -107,7 +104,12 @@ interface NoPkMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int insertMultiple(Collection<NoPk> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, noPk, c ->
+        return insertMultiple(null, records);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int insertMultiple(String tableName, Collection<NoPk> records) {
+        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, null == tableName ? noPk : noPk.withName(tableName), c ->
             c.map(qqNum).toProperty("qqNum")
             .map(realName).toProperty("realName")
             .map(nickname).toProperty("nickname")
@@ -116,64 +118,103 @@ interface NoPkMapper {
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default int insertSelective(NoPk record) {
-        return MyBatis3Utils.insert(this::insert, record, noPk, c ->
-            c.map(qqNum).toPropertyWhenPresent("qqNum", record::getQqNum)
-            .map(realName).toPropertyWhenPresent("realName", record::getRealName)
-            .map(nickname).toPropertyWhenPresent("nickname", record::getNickname)
-            .map(password).toPropertyWhenPresent("password", record::getPassword)
+    default int insertSelective(NoPk row) {
+        return insertSelective(null, row);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int insertSelective(String tableName, NoPk row) {
+        return MyBatis3Utils.insert(this::insert, row, null == tableName ? noPk : noPk.withName(tableName), c ->
+            c.map(qqNum).toPropertyWhenPresent("qqNum", row::getQqNum)
+            .map(realName).toPropertyWhenPresent("realName", row::getRealName)
+            .map(nickname).toPropertyWhenPresent("nickname", row::getNickname)
+            .map(password).toPropertyWhenPresent("password", row::getPassword)
         );
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default Optional<NoPk> selectOne(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectOne(this::selectOne, selectList, noPk, completer);
+        return selectOne(null, completer);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default Optional<NoPk> selectOne(String tableName, SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectOne(this::selectOne, selectList, null == tableName ? noPk : noPk.withName(tableName), completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default List<NoPk> select(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectList(this::selectMany, selectList, noPk, completer);
+        return select(null, completer);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default List<NoPk> select(String tableName, SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectList(this::selectMany, selectList, null == tableName ? noPk : noPk.withName(tableName), completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default List<NoPk> selectDistinct(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, noPk, completer);
+        return selectDistinct(null, completer);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default List<NoPk> selectDistinct(String tableName, SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, null == tableName ? noPk : noPk.withName(tableName), completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     default int update(UpdateDSLCompleter completer) {
-        return MyBatis3Utils.update(this::update, noPk, completer);
+        return update(null, completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateAllColumns(NoPk record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(qqNum).equalTo(record::getQqNum)
-                .set(realName).equalTo(record::getRealName)
-                .set(nickname).equalTo(record::getNickname)
-                .set(password).equalTo(record::getPassword);
+    default int update(String tableName, UpdateDSLCompleter completer) {
+        return MyBatis3Utils.update(this::update, null == tableName ? noPk : noPk.withName(tableName), completer);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(NoPk record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(qqNum).equalToWhenPresent(record::getQqNum)
-                .set(realName).equalToWhenPresent(record::getRealName)
-                .set(nickname).equalToWhenPresent(record::getNickname)
-                .set(password).equalToWhenPresent(record::getPassword);
+    static UpdateDSL<UpdateModel> updateAllColumns(NoPk row, UpdateDSL<UpdateModel> dsl) {
+        return dsl.set(qqNum).equalTo(row::getQqNum)
+                .set(realName).equalTo(row::getRealName)
+                .set(nickname).equalTo(row::getNickname)
+                .set(password).equalTo(row::getPassword);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default List<NoPk> selectRange(long currentPage, int pageSize) {
-        return SelectDSL.select(selectModel -> RangeAdapter.of(selectModel, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
-                .from(noPk)
-                .build()
-                .execute();
+    static UpdateDSL<UpdateModel> updateSelectiveColumns(NoPk row, UpdateDSL<UpdateModel> dsl) {
+        return dsl.set(qqNum).equalToWhenPresent(row::getQqNum)
+                .set(realName).equalToWhenPresent(row::getRealName)
+                .set(nickname).equalToWhenPresent(row::getNickname)
+                .set(password).equalToWhenPresent(row::getPassword);
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    default Page<NoPk> selectPage(long currentPage, int pageSize) {
-        return SelectDSL.select(selectModel -> PageAdapter.of(selectModel, this::count, this::selectMany, currentPage, pageSize), qqNum, realName, nickname, password)
-                .from(noPk)
-                .build()
-                .execute();
+    default Page<NoPk> selectPage(long currentPage, int pageSize, WhereApplier where, SortSpecification... columns) {
+        return selectPage(null, currentPage, pageSize, where, columns);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default Page<NoPk> selectPage(String tableName, long currentPage, int pageSize, WhereApplier where, SortSpecification... columns) {
+        Function<SelectModel, PageAdapter<NoPk>> adapter = model -> PageAdapter.of(model, this::count, this::selectMany, currentPage, pageSize);
+        QueryExpressionDSL<PageAdapter<NoPk>> dsl = SelectDSL.select(adapter, qqNum, realName, nickname, password)
+            .from(null == tableName ? noPk : noPk.withName(tableName));
+        Optional.ofNullable(where).ifPresent(wa -> dsl.applyWhere(wa));
+        Optional.ofNullable(columns).filter(cols -> cols.length > 0).ifPresent(cols -> dsl.orderBy(cols));
+        return dsl.build().execute();
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default List<NoPk> selectRange(long currentPage, int pageSize, WhereApplier where, SortSpecification... columns) {
+        return selectRange(null, currentPage, pageSize, where, columns);
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default List<NoPk> selectRange(String tableName, long currentPage, int pageSize, WhereApplier where, SortSpecification... columns) {
+        Function<SelectModel, RangeAdapter<NoPk>> adapter = model -> RangeAdapter.of(model, this::selectMany, currentPage, pageSize);
+        QueryExpressionDSL<RangeAdapter<NoPk>> dsl = SelectDSL.select(adapter, qqNum, realName, nickname, password)
+            .from(null == tableName ? noPk : noPk.withName(tableName));
+        Optional.ofNullable(where).ifPresent(wa -> dsl.applyWhere(wa));
+        Optional.ofNullable(columns).filter(cols -> cols.length > 0).ifPresent(cols -> dsl.orderBy(cols));
+        return dsl.build().execute();
     }
 }

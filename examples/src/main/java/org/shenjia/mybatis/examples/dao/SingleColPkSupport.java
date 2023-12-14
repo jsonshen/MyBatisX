@@ -1,9 +1,9 @@
 package org.shenjia.mybatis.examples.dao;
 
+import jakarta.annotation.Generated;
 import java.sql.JDBCType;
-import javax.annotation.Generated;
+import org.mybatis.dynamic.sql.AliasableSqlTable;
 import org.mybatis.dynamic.sql.SqlColumn;
-import org.mybatis.dynamic.sql.SqlTable;
 
 public final class SingleColPkSupport {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -22,7 +22,7 @@ public final class SingleColPkSupport {
     public static final SqlColumn<String> password = singleColPk.password;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final class SingleColPk extends SqlTable {
+    public static final class SingleColPk extends AliasableSqlTable<SingleColPk> {
         public final SqlColumn<Integer> qqNum = column("QQ_NUM", JDBCType.INTEGER);
 
         public final SqlColumn<String> realName = column("REAL_NAME", JDBCType.VARCHAR);
@@ -32,7 +32,7 @@ public final class SingleColPkSupport {
         public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
 
         public SingleColPk() {
-            super("SINGLE_COL_PK");
+            super("SINGLE_COL_PK", SingleColPk::new);
         }
     }
 }

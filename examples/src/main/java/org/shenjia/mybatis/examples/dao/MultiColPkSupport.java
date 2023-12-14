@@ -1,9 +1,9 @@
 package org.shenjia.mybatis.examples.dao;
 
+import jakarta.annotation.Generated;
 import java.sql.JDBCType;
-import javax.annotation.Generated;
+import org.mybatis.dynamic.sql.AliasableSqlTable;
 import org.mybatis.dynamic.sql.SqlColumn;
-import org.mybatis.dynamic.sql.SqlTable;
 
 public final class MultiColPkSupport {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -22,7 +22,7 @@ public final class MultiColPkSupport {
     public static final SqlColumn<String> password = multiColPk.password;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final class MultiColPk extends SqlTable {
+    public static final class MultiColPk extends AliasableSqlTable<MultiColPk> {
         public final SqlColumn<Integer> qqNum = column("QQ_NUM", JDBCType.INTEGER);
 
         public final SqlColumn<String> realName = column("REAL_NAME", JDBCType.VARCHAR);
@@ -32,7 +32,7 @@ public final class MultiColPkSupport {
         public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
 
         public MultiColPk() {
-            super("MULTI_COL_PK");
+            super("MULTI_COL_PK", MultiColPk::new);
         }
     }
 }

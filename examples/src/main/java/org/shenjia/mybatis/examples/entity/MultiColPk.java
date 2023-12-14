@@ -11,8 +11,8 @@
 
 package org.shenjia.mybatis.examples.entity;
 
+import jakarta.annotation.Generated;
 import java.io.Serializable;
-import javax.annotation.Generated;
 
 public class MultiColPk implements Serializable {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

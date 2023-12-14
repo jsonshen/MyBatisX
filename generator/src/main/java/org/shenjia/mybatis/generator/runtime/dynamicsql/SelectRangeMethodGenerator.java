@@ -1,4 +1,4 @@
-package org.shenjia.mybatis.generator.runtime.dynamic.sql.elements;
+package org.shenjia.mybatis.generator.runtime.dynamicsql;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,13 +14,11 @@ import org.mybatis.generator.runtime.dynamic.sql.elements.MethodAndImports;
 public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
 
 	private FullyQualifiedJavaType recordType;
-    private String tableFieldName;
     private FragmentGenerator fragmentGenerator;
     
     private SelectRangeMethodGenerator(Builder builder) {
         super(builder);
         recordType = builder.recordType;
-        tableFieldName = builder.tableFieldName;
         fragmentGenerator = builder.fragmentGenerator;
     }
 
@@ -32,50 +30,56 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
         }
         
         Set<FullyQualifiedJavaType> imports = new HashSet<FullyQualifiedJavaType>();
-
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SortSpecification")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.where.WhereApplier")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.RangeAdapter")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("java.util.Optional"));
+        imports.add(new FullyQualifiedJavaType("java.util.function.Function"));
+		imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.QueryExpressionDSL"));
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SortSpecification"));
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL"));
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectModel"));
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.where.WhereApplier"));
+        imports.add(new FullyQualifiedJavaType("org.shenjia.mybatis.paging.RangeAdapter"));
         imports.add(FullyQualifiedJavaType.getNewListInstance());
         imports.add(recordType);
         
-        Method method = new Method("selectRange"); //$NON-NLS-1$
-        method.setDefault(true);
+        Method method = new Method("selectRange");
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
+        method.setDefault(true);
         method.addParameter(new Parameter(new FullyQualifiedJavaType("long"), "currentPage"));
         method.addParameter(new Parameter(new FullyQualifiedJavaType("int"), "pageSize"));
         method.addParameter(new Parameter(new FullyQualifiedJavaType("WhereApplier"), "where"));
         method.addParameter(new Parameter(new FullyQualifiedJavaType("SortSpecification..."), "columns"));
+        method.setReturnType(new FullyQualifiedJavaType("List<" + recordType.getShortNameWithoutTypeArguments() + ">"));
         
-        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType("List<" //$NON-NLS-1$
-                + recordType.getShortNameWithoutTypeArguments()
-                + ">"); //$NON-NLS-1$
-        method.setReturnType(returnType);
-        StringBuilder sb = new StringBuilder();
-        sb.append("return SelectDSL.select(selectModel -> RangeAdapter.of(selectModel, this::selectMany, currentPage, pageSize), "); //$NON-NLS-1$
-        sb.append(fragmentGenerator.getSelectList());
-        sb.append(')');
-        method.addBodyLine(sb.toString());
-        method.addBodyLine("        .from(" + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-        method.addBodyLine("        .applyWhere(where)"); //$NON-NLS-1$ //$NON-NLS-2$
-        method.addBodyLine("        .orderBy(columns)"); //$NON-NLS-1$ //$NON-NLS-2$
-        method.addBodyLine("        .build()");
-        method.addBodyLine("        .execute();");
+		StringBuilder buf = new StringBuilder();
+		buf.append("Function<SelectModel, RangeAdapter<");
+		buf.append(recordType.getShortNameWithoutTypeArguments());
+		buf.append(">> adapter = model -> RangeAdapter.of(model, this::selectMany, currentPage, pageSize);");
+		method.addBodyLine(buf.toString());
+		
+		buf = new StringBuilder();
+		buf.append("QueryExpressionDSL<RangeAdapter<");
+		buf.append(recordType.getShortNameWithoutTypeArguments());
+		buf.append(">> dsl = SelectDSL.select(adapter, ");
+		buf.append(fragmentGenerator.getSelectList());
+		buf.append(")");
+		method.addBodyLine(buf.toString());
+		
+		method.addBodyLine("    .from(" + tableFieldName + ");");
+		method.addBodyLine("Optional.ofNullable(where).ifPresent(wa -> dsl.applyWhere(wa));");
+		method.addBodyLine("Optional.ofNullable(columns).filter(cols -> cols.length > 0).ifPresent(cols -> dsl.orderBy(cols));");
+		method.addBodyLine("return dsl.build().execute();");
         
-        return MethodAndImports.withMethod(method)
-                .withImports(imports)
-                .build();
+		return MethodAndImports.withMethod(method).withImports(imports).build();
     }
 
     @Override
     public boolean callPlugins(Method method, Interface interfaze) {
-        return context.getPlugins().clientSelectByExampleWithBLOBsMethodGenerated(method, interfaze, introspectedTable);
+        return true;
     }
 
     public static class Builder extends BaseBuilder<Builder> {
+    	
         private FullyQualifiedJavaType recordType;
-        private String tableFieldName;
         private FragmentGenerator fragmentGenerator;
         
         public Builder withRecordType(FullyQualifiedJavaType recordType) {
@@ -83,11 +87,6 @@ public class SelectRangeMethodGenerator extends AbstractMethodGenerator {
             return this;
         }
         
-        public Builder withTableFieldName(String tableFieldName) {
-            this.tableFieldName = tableFieldName;
-            return this;
-        }
-
         public Builder withFragmentGenerator(FragmentGenerator fragmentGenerator) {
             this.fragmentGenerator = fragmentGenerator;
             return this;
