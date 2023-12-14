@@ -183,9 +183,6 @@ public class DynamicTableNamePlugin extends PluginAdapter {
 
 	private void rewriteOriginalMethod(Method method, String regex, String replacement) {
 		method.addParameter(0, new Parameter(new FullyQualifiedJavaType("String"), "tableName"));
-//		String firstLine = method.getBodyLines().get(0).replaceFirst(regex, replacement);
-//		method.getBodyLines().remove(0);
-//		method.addBodyLine(0, firstLine);
 		for (int i = 0; i < method.getBodyLines().size(); i++) {
 			String line = method.getBodyLines().get(i);
 			String replaced = line.replaceFirst(regex, replacement);
