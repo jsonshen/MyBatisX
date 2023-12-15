@@ -1,5 +1,5 @@
-/**
- * Copyright 2015-2016 the original author or authors.
+/*
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ import java.util.Optional;
 
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.VisitableElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.internal.util.StringUtility;
+import org.shenjia.mybatis.generator.api.MyBatisXPlugin;
 
 /**
  * 
  * @author json
  *
  */
-public class OptimisticLockPlugin extends PluginAdapter {
+public class OptimisticLockPlugin extends MyBatisXPlugin {
 
 	private String lockColumnName = "version";
 

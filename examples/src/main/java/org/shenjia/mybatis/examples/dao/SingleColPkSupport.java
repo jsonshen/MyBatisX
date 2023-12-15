@@ -1,38 +1,37 @@
+/*
+ * Copyright 2015-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+// @formatter:off
 package org.shenjia.mybatis.examples.dao;
 
-import jakarta.annotation.Generated;
 import java.sql.JDBCType;
 import org.mybatis.dynamic.sql.AliasableSqlTable;
 import org.mybatis.dynamic.sql.SqlColumn;
 
-public final class SingleColPkSupport {
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SingleColPk singleColPk = new SingleColPk();
+public final class SingleColPkSupport extends AliasableSqlTable<SingleColPkSupport> {
+    public static final SingleColPkSupport singleColPk = new SingleColPkSupport();
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Integer> qqNum = singleColPk.qqNum;
+    public static final SqlColumn<Integer> qqNum = SqlColumn.of("QQ_NUM", singleColPk, JDBCType.INTEGER);
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> realName = singleColPk.realName;
+    public static final SqlColumn<String> realName = SqlColumn.of("REAL_NAME", singleColPk, JDBCType.VARCHAR);
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> nickname = singleColPk.nickname;
+    public static final SqlColumn<String> nickname = SqlColumn.of("NICKNAME", singleColPk, JDBCType.VARCHAR);
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> password = singleColPk.password;
+    public static final SqlColumn<String> password = SqlColumn.of("PASSWORD", singleColPk, JDBCType.VARCHAR);
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final class SingleColPk extends AliasableSqlTable<SingleColPk> {
-        public final SqlColumn<Integer> qqNum = column("QQ_NUM", JDBCType.INTEGER);
-
-        public final SqlColumn<String> realName = column("REAL_NAME", JDBCType.VARCHAR);
-
-        public final SqlColumn<String> nickname = column("NICKNAME", JDBCType.VARCHAR);
-
-        public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
-
-        public SingleColPk() {
-            super("SINGLE_COL_PK", SingleColPk::new);
-        }
+    private SingleColPkSupport() {
+        super("SINGLE_COL_PK", SingleColPkSupport::new);
     }
 }

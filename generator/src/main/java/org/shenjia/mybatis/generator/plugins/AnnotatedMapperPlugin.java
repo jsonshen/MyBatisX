@@ -1,5 +1,5 @@
-/**
- * Copyright 2015-2016 the original author or authors.
+/*
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@ package org.shenjia.mybatis.generator.plugins;
 import java.util.List;
 
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
+import org.shenjia.mybatis.generator.api.MyBatisXPlugin;
 
 /**
  * 
  * @author json
  *
  */
-public class AnnotatedMapperPlugin extends PluginAdapter {
+public class AnnotatedMapperPlugin extends MyBatisXPlugin {
 
 	public boolean validate(List<String> warnings) {
 		return true;

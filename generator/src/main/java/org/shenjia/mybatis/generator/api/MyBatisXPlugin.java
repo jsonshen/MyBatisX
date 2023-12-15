@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.shenjia.mybatis.examples.dao;
+package org.shenjia.mybatis.generator.api;
 
-import org.apache.ibatis.annotations.Mapper;
+import org.mybatis.generator.api.PluginAdapter;
 
-@Mapper
-public interface MultiColPkDao extends MultiColPkMapper {
+public abstract class MyBatisXPlugin extends PluginAdapter {
+
 }

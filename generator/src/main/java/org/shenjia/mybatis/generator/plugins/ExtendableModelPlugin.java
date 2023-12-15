@@ -1,5 +1,5 @@
-/**
- * Copyright 2015-2016 the original author or authors.
+/*
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,20 @@ import java.util.List;
 
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.internal.util.StringUtility;
+import org.shenjia.mybatis.generator.api.MyBatisXPlugin;
 
 /**
  * 
  * @author json
  *
  */
-public class ExtendableModelPlugin extends PluginAdapter {
+public class ExtendableModelPlugin extends MyBatisXPlugin {
 
 	private List<GeneratedJavaFile> extendableModels = new ArrayList<GeneratedJavaFile>();
 	private boolean generateBuildMethod = true;

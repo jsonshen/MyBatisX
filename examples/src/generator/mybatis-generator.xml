@@ -9,8 +9,8 @@
 		<plugin type="org.shenjia.mybatis.generator.plugins.JavaCommentPlugin">
 			<property name="licenseCommentFile" value="src/generator/source-file-header.txt" />
 		</plugin>
-		<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin" />
 		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+		<plugin type="org.shenjia.mybatis.generator.plugins.EqualsAndHashCodePlugin" />
 		<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
 		<plugin type="org.mybatis.generator.plugins.VirtualPrimaryKeyPlugin" />
  		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicSqlExtensionPlugin">
@@ -19,6 +19,9 @@
 			<property name="addSelectRangeMethod" value="true" />
 		</plugin>
 		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicTableNamePlugin" />
+		<plugin type="org.shenjia.mybatis.generator.plugins.RewriteDynamicSqlSupportPlugin" />
+		<plugin type="org.shenjia.mybatis.generator.plugins.DeleteGeneratedAnnotationPlugin" />
+		<plugin type="org.shenjia.mybatis.generator.plugins.EclipseFormatterOffPlugin" />
 
 		<commentGenerator>
 			<!-- 这个元素用来去除指定生成的注释中是否包含生成的日期 false:表示保护 -->
@@ -32,6 +35,7 @@
 			connectionURL="${url}" userId="${username}" password="${password}" />
 		<javaTypeResolver type="org.shenjia.mybatis.generator.types.MyBatisXJavaTypeResolver">
 			<property name="forceBigDecimals" value="false" />
+			<property name="typeMappingsFile" value="src/generator/type-mappings.properties" />
 		</javaTypeResolver>
 		<!-- 生成模型的包名和位置 -->
 		<javaModelGenerator

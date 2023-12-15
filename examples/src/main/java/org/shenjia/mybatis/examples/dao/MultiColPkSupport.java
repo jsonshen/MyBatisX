@@ -1,38 +1,37 @@
+/*
+ * Copyright 2015-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+// @formatter:off
 package org.shenjia.mybatis.examples.dao;
 
-import jakarta.annotation.Generated;
 import java.sql.JDBCType;
 import org.mybatis.dynamic.sql.AliasableSqlTable;
 import org.mybatis.dynamic.sql.SqlColumn;
 
-public final class MultiColPkSupport {
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final MultiColPk multiColPk = new MultiColPk();
+public final class MultiColPkSupport extends AliasableSqlTable<MultiColPkSupport> {
+    public static final MultiColPkSupport multiColPk = new MultiColPkSupport();
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<Integer> qqNum = multiColPk.qqNum;
+    public static final SqlColumn<Integer> qqNum = SqlColumn.of("QQ_NUM", multiColPk, JDBCType.INTEGER);
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> realName = multiColPk.realName;
+    public static final SqlColumn<String> realName = SqlColumn.of("REAL_NAME", multiColPk, JDBCType.VARCHAR);
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> nickname = multiColPk.nickname;
+    public static final SqlColumn<String> nickname = SqlColumn.of("NICKNAME", multiColPk, JDBCType.VARCHAR);
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final SqlColumn<String> password = multiColPk.password;
+    public static final SqlColumn<String> password = SqlColumn.of("PASSWORD", multiColPk, JDBCType.VARCHAR);
 
-    @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    public static final class MultiColPk extends AliasableSqlTable<MultiColPk> {
-        public final SqlColumn<Integer> qqNum = column("QQ_NUM", JDBCType.INTEGER);
-
-        public final SqlColumn<String> realName = column("REAL_NAME", JDBCType.VARCHAR);
-
-        public final SqlColumn<String> nickname = column("NICKNAME", JDBCType.VARCHAR);
-
-        public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
-
-        public MultiColPk() {
-            super("MULTI_COL_PK", MultiColPk::new);
-        }
+    private MultiColPkSupport() {
+        super("MULTI_COL_PK", MultiColPkSupport::new);
     }
 }

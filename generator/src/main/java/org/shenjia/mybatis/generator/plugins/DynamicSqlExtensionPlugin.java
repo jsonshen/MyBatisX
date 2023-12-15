@@ -1,5 +1,5 @@
-/**
- * Copyright 2017-2019 the original author or authors.
+/*
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.ShellCallback;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
@@ -37,6 +36,7 @@ import org.mybatis.generator.logging.LogFactory;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.FragmentGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.MethodAndImports;
+import org.shenjia.mybatis.generator.api.MyBatisXPlugin;
 import org.shenjia.mybatis.generator.runtime.dynamicsql.SelectPageMethodGenerator;
 import org.shenjia.mybatis.generator.runtime.dynamicsql.SelectRangeMethodGenerator;
 
@@ -46,7 +46,7 @@ import org.shenjia.mybatis.generator.runtime.dynamicsql.SelectRangeMethodGenerat
  * @author Jason Shen
  *
  */
-public class DynamicSqlExtensionPlugin extends PluginAdapter {
+public class DynamicSqlExtensionPlugin extends MyBatisXPlugin {
 
     private static final Log LOG = LogFactory.getLog(DynamicSqlExtensionPlugin.class);
     private List<GeneratedJavaFile> generatedJavaFiles = new ArrayList<>();
@@ -73,9 +73,7 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
     }
 
     @Override
-    public boolean clientGenerated(Interface interfaze,
-//        TopLevelClass topLevelClass,
-        IntrospectedTable introspectedTable) {
+	public boolean clientGenerated(Interface interfaze, IntrospectedTable introspectedTable) {
         FullyQualifiedJavaType recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
         String resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result"; //$NON-NLS-1$
         String tableFieldName = JavaBeansUtil.getValidPropertyName(introspectedTable.getFullyQualifiedTable()
@@ -102,7 +100,6 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         FullyQualifiedJavaType recordType) {
         SelectRangeMethodGenerator generator = new SelectRangeMethodGenerator.Builder()
             .withContext(context)
-            .withFragmentGenerator(fragmentGenerator)
             .withIntrospectedTable(introspectedTable)
             .withTableFieldName(tableFieldName)
             .withRecordType(recordType)
@@ -117,7 +114,6 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
         FullyQualifiedJavaType recordType) {
         SelectPageMethodGenerator generator = new SelectPageMethodGenerator.Builder()
             .withContext(context)
-            .withFragmentGenerator(fragmentGenerator)
             .withIntrospectedTable(introspectedTable)
             .withTableFieldName(tableFieldName)
             .withRecordType(recordType)
@@ -140,9 +136,7 @@ public class DynamicSqlExtensionPlugin extends PluginAdapter {
 
         FullyQualifiedJavaType mapperType = new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper");
         mapperInterfaze.setVisibility(JavaVisibility.DEFAULT);
-        mapperInterfaze.addJavaDocLine("// Do not modify this file, it will be overwritten when code is generated.");
-        mapperInterfaze.getAnnotations()
-            .clear();
+        mapperInterfaze.getAnnotations().clear();
         Set<FullyQualifiedJavaType> importTypes = mapperInterfaze.getImportedTypes();
         Set<FullyQualifiedJavaType> newImportTypes = importTypes.stream()
             .filter(t -> !t.equals(mapperType))

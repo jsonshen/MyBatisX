@@ -1,5 +1,5 @@
-/**
- * Copyright 2015-2016 the original author or authors.
+/*
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,18 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.internal.util.StringUtility;
 import org.mybatis.generator.internal.util.messages.Messages;
+import org.shenjia.mybatis.generator.api.MyBatisXPlugin;
 
 /**
  * 
  * @author json
  *
  */
-public class JavaCommentPlugin extends PluginAdapter {
+public class JavaCommentPlugin extends MyBatisXPlugin {
 
 	private String licenseComment;
 	private String classComment;
@@ -99,6 +99,11 @@ public class JavaCommentPlugin extends PluginAdapter {
 	@Override
 	public boolean providerGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
 		return addJavaComment(topLevelClass);
+	}
+	
+	@Override
+	public boolean dynamicSqlSupportGenerated(TopLevelClass supportClass, IntrospectedTable introspectedTable) {
+		return addJavaComment(supportClass);
 	}
 
 	private boolean addJavaComment(TopLevelClass tlc) {

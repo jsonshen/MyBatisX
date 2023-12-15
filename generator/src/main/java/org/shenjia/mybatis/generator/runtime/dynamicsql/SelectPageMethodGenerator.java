@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.shenjia.mybatis.generator.runtime.dynamicsql;
 
 import java.util.HashSet;
@@ -8,18 +23,15 @@ import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
-import org.mybatis.generator.runtime.dynamic.sql.elements.FragmentGenerator;
 import org.mybatis.generator.runtime.dynamic.sql.elements.MethodAndImports;
 
 public class SelectPageMethodGenerator extends AbstractMethodGenerator {
 
 	private FullyQualifiedJavaType recordType;
-	private FragmentGenerator fragmentGenerator;
 
 	private SelectPageMethodGenerator(Builder builder) {
 		super(builder);
 		recordType = builder.recordType;
-		fragmentGenerator = builder.fragmentGenerator;
 	}
 
 	@Override
@@ -49,7 +61,7 @@ public class SelectPageMethodGenerator extends AbstractMethodGenerator {
 		method.addParameter(new Parameter(new FullyQualifiedJavaType("long"), "currentPage"));
 		method.addParameter(new Parameter(new FullyQualifiedJavaType("int"), "pageSize"));
 		method.addParameter(new Parameter(new FullyQualifiedJavaType("WhereApplier"), "where"));
-		method.addParameter(new Parameter(new FullyQualifiedJavaType("SortSpecification..."), "columns"));
+		method.addParameter(new Parameter(new FullyQualifiedJavaType("SortSpecification..."), "sorts"));
 
 		StringBuilder buf = new StringBuilder();
 		buf.append("Function<SelectModel, PageAdapter<");
@@ -60,14 +72,12 @@ public class SelectPageMethodGenerator extends AbstractMethodGenerator {
 		buf = new StringBuilder();
 		buf.append("QueryExpressionDSL<PageAdapter<");
 		buf.append(recordType.getShortNameWithoutTypeArguments());
-		buf.append(">> dsl = SelectDSL.select(adapter, ");
-		buf.append(fragmentGenerator.getSelectList());
-		buf.append(")");
+		buf.append(">> dsl = SelectDSL.select(adapter, selectList)");
 		method.addBodyLine(buf.toString());
 		
 		method.addBodyLine("    .from(" + tableFieldName + ");");
 		method.addBodyLine("Optional.ofNullable(where).ifPresent(wa -> dsl.applyWhere(wa));");
-		method.addBodyLine("Optional.ofNullable(columns).filter(cols -> cols.length > 0).ifPresent(cols -> dsl.orderBy(cols));");
+		method.addBodyLine("Optional.ofNullable(sorts).filter(ss -> ss.length > 0).ifPresent(ss -> dsl.orderBy(ss));");
 		method.addBodyLine("return dsl.build().execute();");
 
 		return MethodAndImports.withMethod(method).withImports(imports).build();
@@ -81,15 +91,9 @@ public class SelectPageMethodGenerator extends AbstractMethodGenerator {
 	public static class Builder extends BaseBuilder<Builder> {
 
 		private FullyQualifiedJavaType recordType;
-		private FragmentGenerator fragmentGenerator;
 
 		public Builder withRecordType(FullyQualifiedJavaType recordType) {
 			this.recordType = recordType;
-			return this;
-		}
-
-		public Builder withFragmentGenerator(FragmentGenerator fragmentGenerator) {
-			this.fragmentGenerator = fragmentGenerator;
 			return this;
 		}
 
