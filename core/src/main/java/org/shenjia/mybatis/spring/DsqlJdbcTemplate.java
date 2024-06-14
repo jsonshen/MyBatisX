@@ -39,6 +39,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
+/**
+ * @see org.mybatis.dynamic.sql.util.spring.NamedParameterJdbcTemplateExtensions
+ */
+@Deprecated
 public class DsqlJdbcTemplate {
 
     private NamedParameterJdbcOperations jdbcTemplate;
