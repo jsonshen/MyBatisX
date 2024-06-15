@@ -16,9 +16,19 @@
 // @formatter:off
 package org.shenjia.mybatis.examples.entity;
 
-import java.io.Serializable;
+import java.sql.JDBCType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.mybatis.dynamic.sql.AliasableSqlTable;
+import org.mybatis.dynamic.sql.SqlColumn;
+import org.shenjia.mybatis.spring.JdbcModel;
+import org.springframework.jdbc.core.RowMapper;
 
-public class MultiColPk implements Serializable {
+public class MultiColPk implements JdbcModel<MultiColPk> {
+
+    public static final Table TABLE = new Table();
+
     private Integer qqNum;
 
     private String realName;
@@ -26,8 +36,6 @@ public class MultiColPk implements Serializable {
     private String nickname;
 
     private String password;
-
-    private static final long serialVersionUID = 1L;
 
     public Integer getQqNum() {
         return qqNum;
@@ -62,6 +70,28 @@ public class MultiColPk implements Serializable {
     }
 
     @Override
+    public RowMapper<MultiColPk> rowMapper() {
+        return (rs, rowNum) -> {
+            MultiColPk record = new MultiColPk();
+            record.setQqNum(rs.getInt("QQ_NUM"));
+            record.setRealName(rs.getString("REAL_NAME"));
+            record.setNickname(rs.getString("NICKNAME"));
+            record.setPassword(rs.getString("PASSWORD"));
+            return record;
+        };
+    }
+
+    @Override
+    public Table table() {
+        return TABLE;
+    }
+
+    @Override
+    public List<SqlColumn<?>> columns() {
+        return TABLE.columns;
+    }
+
+    @Override
     public boolean equals(Object that) {
         if (this == that) {
             return true;
@@ -92,12 +122,35 @@ public class MultiColPk implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
+        sb.append(", TABLE=").append(TABLE);
         sb.append(", qqNum=").append(qqNum);
         sb.append(", realName=").append(realName);
         sb.append(", nickname=").append(nickname);
         sb.append(", password=").append(password);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
+    }
+
+    public static class Table extends AliasableSqlTable<Table> {
+
+        public final List<SqlColumn<?>> columns;
+
+        public final SqlColumn<Integer> qqNum = column("QQ_NUM", JDBCType.INTEGER);
+
+        public final SqlColumn<String> realName = column("REAL_NAME", JDBCType.VARCHAR);
+
+        public final SqlColumn<String> nickname = column("NICKNAME", JDBCType.VARCHAR);
+
+        public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
+
+        public Table() {
+            super("MULTI_COL_PK", Table::new);
+            List<SqlColumn<?>> list = new ArrayList<>();
+            list.add(qqNum);
+            list.add(realName);
+            list.add(nickname);
+            list.add(password);
+            this.columns = Collections.unmodifiableList(list);
+        }
     }
 }

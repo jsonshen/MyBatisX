@@ -5,21 +5,21 @@
 <generatorConfiguration>
 	<properties url="file:./src/generator/jdbc.properties" />
 	
-	<context id="MyBatisXExamples" targetRuntime="MyBatis3DynamicSql">
+	<context id="MyBatisXExamples" targetRuntime="org.shenjia.mybatis.generator.runtime.springjdbc.SpringJdbcDynamicSql">
 		<plugin type="org.shenjia.mybatis.generator.plugins.JavaCommentPlugin">
 			<property name="licenseCommentFile" value="src/generator/source-file-header.txt" />
 		</plugin>
-		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+		<!-- <plugin type="org.mybatis.generator.plugins.SerializablePlugin" /> -->
 		<plugin type="org.shenjia.mybatis.generator.plugins.EqualsAndHashCodePlugin" />
 		<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
 		<plugin type="org.mybatis.generator.plugins.VirtualPrimaryKeyPlugin" />
- 		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicSqlExtensionPlugin">
+ 		<!-- <plugin type="org.shenjia.mybatis.generator.plugins.DynamicSqlExtensionPlugin">
 			<property name="dynamicSqlSupportSuffix" value="Support" />
 			<property name="addSelectPageMethod" value="true" />
 			<property name="addSelectRangeMethod" value="true" />
-		</plugin>
-		<plugin type="org.shenjia.mybatis.generator.plugins.DynamicTableNamePlugin" />
-		<plugin type="org.shenjia.mybatis.generator.plugins.RewriteDynamicSqlSupportPlugin" />
+		</plugin> -->
+		<!-- <plugin type="org.shenjia.mybatis.generator.plugins.DynamicTableNamePlugin" />
+		<plugin type="org.shenjia.mybatis.generator.plugins.RewriteDynamicSqlSupportPlugin" /> -->
 		<plugin type="org.shenjia.mybatis.generator.plugins.DeleteGeneratedAnnotationPlugin" />
 		<plugin type="org.shenjia.mybatis.generator.plugins.EclipseFormatterOffPlugin" />
 

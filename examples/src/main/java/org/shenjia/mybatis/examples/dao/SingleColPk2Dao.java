@@ -4,8 +4,10 @@ import org.shenjia.mybatis.spring.JdbcClient;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SingleColPkDao extends SingleColPkMapper {
-    public SingleColPkDao(JdbcClient client) {
-        super(client);
-    }
+public class SingleColPk2Dao extends SingleColPk2Mapper {
+
+	public SingleColPk2Dao(JdbcClient client) {
+		super(client);
+	}
+
 }

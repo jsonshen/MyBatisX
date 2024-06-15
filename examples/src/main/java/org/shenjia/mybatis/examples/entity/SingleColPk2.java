@@ -20,15 +20,16 @@ import java.sql.JDBCType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.mybatis.dynamic.sql.AliasableSqlTable;
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.shenjia.mybatis.spring.JdbcModel;
 import org.springframework.jdbc.core.RowMapper;
 
-public class NoPk implements JdbcModel<NoPk> {
-
-    public static final Table TABLE = new Table();
-
+public class SingleColPk2 implements JdbcModel<SingleColPk2> {
+	
+	public static final Table TABLE = new Table();
+	
     private Integer qqNum;
 
     private String realName;
@@ -70,28 +71,6 @@ public class NoPk implements JdbcModel<NoPk> {
     }
 
     @Override
-    public RowMapper<NoPk> rowMapper() {
-        return (rs, rowNum) -> {
-            NoPk record = new NoPk();
-            record.setQqNum(rs.getInt("QQ_NUM"));
-            record.setRealName(rs.getString("REAL_NAME"));
-            record.setNickname(rs.getString("NICKNAME"));
-            record.setPassword(rs.getString("PASSWORD"));
-            return record;
-        };
-    }
-
-    @Override
-    public Table table() {
-        return TABLE;
-    }
-
-    @Override
-    public List<SqlColumn<?>> columns() {
-        return TABLE.columns;
-    }
-
-    @Override
     public boolean equals(Object that) {
         if (this == that) {
             return true;
@@ -102,11 +81,8 @@ public class NoPk implements JdbcModel<NoPk> {
         if (getClass() != that.getClass()) {
             return false;
         }
-        NoPk other = (NoPk) that;
-        return (this.getQqNum() == null ? other.getQqNum() == null : this.getQqNum().equals(other.getQqNum()))
-            && (this.getRealName() == null ? other.getRealName() == null : this.getRealName().equals(other.getRealName()))
-            && (this.getNickname() == null ? other.getNickname() == null : this.getNickname().equals(other.getNickname()))
-            && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()));
+        SingleColPk2 other = (SingleColPk2) that;
+        return (this.getQqNum() == null ? other.getQqNum() == null : this.getQqNum().equals(other.getQqNum()));
     }
 
     @Override
@@ -114,9 +90,6 @@ public class NoPk implements JdbcModel<NoPk> {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getQqNum() == null) ? 0 : getQqNum().hashCode());
-        result = prime * result + ((getRealName() == null) ? 0 : getRealName().hashCode());
-        result = prime * result + ((getNickname() == null) ? 0 : getNickname().hashCode());
-        result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
         return result;
     }
 
@@ -126,7 +99,6 @@ public class NoPk implements JdbcModel<NoPk> {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", TABLE=").append(TABLE);
         sb.append(", qqNum=").append(qqNum);
         sb.append(", realName=").append(realName);
         sb.append(", nickname=").append(nickname);
@@ -135,26 +107,49 @@ public class NoPk implements JdbcModel<NoPk> {
         return sb.toString();
     }
 
-    public static class Table extends AliasableSqlTable<Table> {
+	@Override
+	public Table table() {
+		return TABLE;
+	}
 
-        public final List<SqlColumn<?>> columns;
+	@Override
+	public List<SqlColumn<?>> columns() {
+		return TABLE.columns;
+	}
 
-        public final SqlColumn<Integer> qqNum = column("QQ_NUM", JDBCType.INTEGER);
+	@Override
+	public RowMapper<SingleColPk2> rowMapper() {
+		return (rs, rowNum) -> {
+			SingleColPk2 entity = new SingleColPk2();
+			entity.setQqNum(rs.getInt("QQ_NUM"));
+			entity.setRealName(rs.getString("REAL_NAME"));
+			entity.setNickname(rs.getString("NICKNAME"));
+			entity.setPassword(rs.getString("PASSWORD"));
+			return entity;
+		};
+	}
+	
+	public static class Table extends AliasableSqlTable<Table> {
 
-        public final SqlColumn<String> realName = column("REAL_NAME", JDBCType.VARCHAR);
+		public final SqlColumn<Integer> qqNum = this.column("QQ_NUM", JDBCType.INTEGER);
 
-        public final SqlColumn<String> nickname = column("NICKNAME", JDBCType.VARCHAR);
+	    public final SqlColumn<String> realName = this.column("REAL_NAME", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
+	    public final SqlColumn<String> nickname = this.column("NICKNAME", JDBCType.VARCHAR);
 
-        public Table() {
-            super("NO_PK", Table::new);
-            List<SqlColumn<?>> list = new ArrayList<>();
-            list.add(qqNum);
-            list.add(realName);
-            list.add(nickname);
-            list.add(password);
-            this.columns = Collections.unmodifiableList(list);
-        }
-    }
+	    public final SqlColumn<String> password = this.column("PASSWORD", JDBCType.VARCHAR);
+	    
+	    public final List<SqlColumn<?>> columns;
+	    
+	    protected Table() {
+			super("SINGLE_COL_PK", Table::new);
+			List<SqlColumn<?>> list = new ArrayList<>();
+			list.add(qqNum);
+			list.add(realName);
+			list.add(nickname);
+			list.add(password);
+			this.columns = Collections.unmodifiableList(list);
+		}
+
+	}
 }
