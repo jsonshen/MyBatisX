@@ -20,6 +20,7 @@ import static org.mybatis.generator.internal.util.messages.Messages.getString;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.mybatis.generator.api.ShellCallback;
 import org.mybatis.generator.api.dom.java.CompilationUnit;
@@ -62,95 +63,59 @@ public class SpringJdbcDynamicSqlMapperGenerator extends AbstractJavaClientGener
     public List<CompilationUnit> getCompilationUnits() {
 		progressCallback.startTask(getString("Progress.17", introspectedTable.getFullyQualifiedTable().toString()));
         preCalculate();
-
-        TopLevelClass mapperClass = createMapperClass();
-        TopLevelClass daoClass = createDaoClass(mapperClass);
-
-//        TopLevelClass supportClass = getSupportClass();
-//        String staticImportString = supportClass.getType().getFullyQualifiedNameWithoutTypeParameters() + ".*"; //$NON-NLS-1$
-//        interfaze.addStaticImport(staticImportString);
-
-//        if (hasGeneratedKeys) {
-//            addBasicInsertMethod(interfaze);
-//            addBasicInsertMultipleMethod(interfaze);
-//        }
-
-//        boolean reuseResultMap = addBasicSelectManyMethod(interfaze);
-//        addBasicSelectOneMethod(interfaze, reuseResultMap);
-//        addGeneralCountMethod(interfaze);
-//        addGeneralDeleteMethod(interfaze);
-//        addDeleteByPrimaryKeyMethod(interfaze);
-//        addInsertOneMethod(interfaze);
-//        addInsertMultipleMethod(interfaze);
-//        addInsertSelectiveMethod(interfaze);
-//        addSelectListField(interfaze);
-//        addGeneralSelectMethod(interfaze);
-//        addSelectDistinctMethod(interfaze);
-//        addSelectByPrimaryKeyMethod(interfaze);
-//        addGeneralUpdateMethod(interfaze);
-//        addUpdateAllMethod(interfaze);
-//        addUpdateSelectiveMethod(interfaze);
-//        addUpdateByPrimaryKeyMethod(interfaze);
-//        addUpdateByPrimaryKeySelectiveMethod(interfaze);
-
-        List<CompilationUnit> answer = new ArrayList<>();
-//        if (context.getPlugins().clientGenerated(interfaze, introspectedTable)) {
-//            answer.add(interfaze);
-//        }
-
-//        if (context.getPlugins().dynamicSqlSupportGenerated(supportClass, introspectedTable)) {
-//            answer.add(supportClass);
-//        }
-        
-		if (null != mapperClass) {
-			answer.add(mapperClass);
+        Interface mapperIface = createMapperInterface();
+        if (hasGeneratedKeys) {
+            addBasicInsertMethod(mapperIface);
+            addBasicInsertMultipleMethod(mapperIface);
+        }
+//        boolean reuseResultMap = addBasicSelectManyMethod(mapperIface);
+//        addBasicSelectOneMethod(mapperIface, reuseResultMap);
+//        addGeneralCountMethod(mapperIface);
+//        addGeneralDeleteMethod(mapperIface);
+        addDeleteByPrimaryKeyMethod(mapperIface);
+        addInsertOneMethod(mapperIface);
+        addInsertMultipleMethod(mapperIface);
+        addInsertSelectiveMethod(mapperIface);
+//        addSelectListField(mapperIface);
+//        addGeneralSelectMethod(mapperIface);
+//        addSelectDistinctMethod(mapperIface);
+        addSelectByPrimaryKeyMethod(mapperIface);
+//        addGeneralUpdateMethod(mapperIface);
+//        addUpdateAllMethod(mapperIface);
+        addUpdateSelectiveMethod(mapperIface);
+        addUpdateByPrimaryKeyMethod(mapperIface);
+        addUpdateByPrimaryKeySelectiveMethod(mapperIface);
+		List<CompilationUnit> answer = new ArrayList<>();
+		if (context.getPlugins().clientGenerated(mapperIface, introspectedTable)) {
+			answer.add(mapperIface);
+			Optional.ofNullable(createDaoClass(mapperIface)).ifPresent(daoCls -> answer.add(daoCls));
 		}
-		if (null != daoClass) {
-			answer.add(daoClass);
-		}
-
         return answer;
     }
 
-    protected void preCalculate() {
-        recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
-        resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result"; //$NON-NLS-1$
-        tableFieldName =
-                JavaBeansUtil.getValidPropertyName(introspectedTable.getMyBatisDynamicSQLTableObjectName());
-        fragmentGenerator = new FragmentGenerator.Builder()
-                .withIntrospectedTable(introspectedTable)
-                .withResultMapId(resultMapId)
-                .withTableFieldName(tableFieldName)
-                .build();
+	protected void preCalculate() {
+		recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
+		resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result";
+		tableFieldName = JavaBeansUtil.getValidPropertyName(introspectedTable.getMyBatisDynamicSQLTableObjectName());
+		fragmentGenerator = new FragmentGenerator.Builder().withIntrospectedTable(introspectedTable)
+		    .withResultMapId(resultMapId)
+		    .withTableFieldName(tableFieldName)
+		    .build();
+		hasGeneratedKeys = introspectedTable.getGeneratedKey().isPresent();
+	}
 
-        hasGeneratedKeys = introspectedTable.getGeneratedKey().isPresent();
-    }
-
-	protected TopLevelClass createMapperClass() {
-		FullyQualifiedJavaType superType = new FullyQualifiedJavaType("org.shenjia.mybatis.spring.JdbcMapper<" + recordType.getShortName() + ">");
-		FullyQualifiedJavaType clientType = new FullyQualifiedJavaType("org.shenjia.mybatis.spring.JdbcClient");
-		FullyQualifiedJavaType mapperType = new FullyQualifiedJavaType(introspectedTable.getMyBatis3JavaMapperType());
-		
-		TopLevelClass mapperClass = new TopLevelClass(mapperType);
-		mapperClass.setSuperClass(superType);
-		mapperClass.addImportedType(superType);
-		mapperClass.addImportedType(clientType);
-		mapperClass.addImportedType(recordType);
-		mapperClass.setVisibility(JavaVisibility.DEFAULT);
-		context.getCommentGenerator().addJavaFileComment(mapperClass);
-
-		Method constructor = new Method(mapperType.getShortName());
-		constructor.addJavaDocLine("");
-		constructor.setConstructor(true);
-		constructor.addParameter(new Parameter(clientType, "client"));
-		constructor.setVisibility(JavaVisibility.PUBLIC);
-		constructor.addBodyLine("super(client, new " + recordType.getShortName() + "());");
-		mapperClass.addMethod(constructor);
-		return mapperClass;
+	protected Interface createMapperInterface() {
+		Interface mapperIface = new Interface(new FullyQualifiedJavaType(introspectedTable.getMyBatis3JavaMapperType()));
+		context.getCommentGenerator().addJavaFileComment(mapperIface);
+		mapperIface.addImportedType(new FullyQualifiedJavaType("org.shenjia.mybatis.spring.JdbcMapper"));
+		mapperIface.addImportedType(recordType);
+		mapperIface.setVisibility(JavaVisibility.DEFAULT);
+		mapperIface.addSuperInterface(new FullyQualifiedJavaType("JdbcMapper<" + recordType.getShortName() + ">"));
+		return mapperIface;
 	}
     
-    protected TopLevelClass createDaoClass(TopLevelClass mapperClass) {
-    	FullyQualifiedJavaType mapperType = mapperClass.getType();
+    protected TopLevelClass createDaoClass(Interface mapperIface) {
+    	FullyQualifiedJavaType mapperType = mapperIface.getType();
 		FullyQualifiedJavaType daoType = new FullyQualifiedJavaType(
 		    mapperType.getPackageName() + "." + recordType.getShortName() + "Dao");
 		try {
@@ -164,24 +129,29 @@ public class SpringJdbcDynamicSqlMapperGenerator extends AbstractJavaClientGener
 			}
 		} catch (ShellException e) {
 			LOG.error(e.getMessage(), e);
+			return null;
 		}
 		FullyQualifiedJavaType clientType = new FullyQualifiedJavaType("org.shenjia.mybatis.spring.JdbcClient");
-		TopLevelClass daoClass = new TopLevelClass(daoType);
-        daoClass.setVisibility(JavaVisibility.PUBLIC);
-        context.getCommentGenerator().addJavaFileComment(daoClass);
-        daoClass.addImportedType(clientType);
-        daoClass.addImportedType(new FullyQualifiedJavaType("org.springframework.stereotype.Component"));
-        daoClass.addAnnotation("@Component");
-        daoClass.setSuperClass(mapperClass.getType());
+		TopLevelClass daoCls = new TopLevelClass(daoType);
+        daoCls.setVisibility(JavaVisibility.PUBLIC);
+        context.getCommentGenerator().addJavaFileComment(daoCls);
+        daoCls.addImportedType(clientType);
+        daoCls.addImportedType(new FullyQualifiedJavaType("org.springframework.stereotype.Component"));
+        daoCls.addImportedType(new FullyQualifiedJavaType("org.shenjia.mybatis.spring.JdbcDao"));
+        daoCls.addImportedType(recordType);
+        daoCls.addAnnotation("@Component");
+        daoCls.addSuperInterface(mapperIface.getType());
+        daoCls.setSuperClass(new FullyQualifiedJavaType("JdbcDao<" + recordType.getShortName() + ">"));
         
         Method constructor = new Method(daoType.getShortName());
         constructor.addJavaDocLine("");
         constructor.setConstructor(true);
         constructor.addParameter(new Parameter(clientType, "client"));
         constructor.setVisibility(JavaVisibility.PUBLIC);
-        constructor.addBodyLine("super(client);");
-        daoClass.addMethod(constructor);
-        return daoClass;
+		constructor.addBodyLine("super(client, new " + recordType.getShortName() + "());");
+        daoCls.addMethod(constructor);
+        
+        return daoCls;
     }
 
     protected void addInsertOneMethod(Interface interfaze) {
