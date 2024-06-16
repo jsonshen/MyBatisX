@@ -18,9 +18,7 @@ package org.shenjia.mybatis.examples.service;
 import java.util.List;
 
 import org.mybatis.dynamic.sql.SqlBuilder;
-import org.mybatis.dynamic.sql.where.WhereApplier;
 import org.shenjia.mybatis.examples.dao.MultiColPkDao;
-import org.shenjia.mybatis.examples.dao.MultiColPkSupport;
 import org.shenjia.mybatis.examples.dao.NoPkDao;
 import org.shenjia.mybatis.examples.dao.SingleColPkDao;
 import org.shenjia.mybatis.examples.entity.MultiColPk;
@@ -58,12 +56,12 @@ public class ExamplesService {
 	}
 
 	public Page<MultiColPk> selectPageMultiColPkRecord(Pageable pageable) {
-		return multiColPkDao.selectPage(MultiColPkDao.selectList, pageable.getCurrentPage(), pageable.getPageSize(),
-		    where -> where.and(MultiColPkSupport.nickname, SqlBuilder.isEqualTo("123")), MultiColPkSupport.nickname);
+		return multiColPkDao.selectPage(MultiColPk.TABLE.columns, pageable,
+		    c -> c.and(MultiColPk.TABLE.nickname, SqlBuilder.isEqualTo("123")), MultiColPk.TABLE.realName);
 	}
 
 	public List<MultiColPk> selectRangeMultiColPkRecord(Pageable pageable) {
-		return multiColPkDao.selectRange(MultiColPkDao.selectList, pageable.getCurrentPage(), pageable.getPageSize(),
-		    (WhereApplier) null, MultiColPkSupport.nickname);
+		return multiColPkDao.selectRange(MultiColPk.TABLE.columns, pageable,
+		    c -> c.and(MultiColPk.TABLE.nickname, SqlBuilder.isEqualTo("123")), MultiColPk.TABLE.realName);
 	}
 }

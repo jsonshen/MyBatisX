@@ -1,0 +1,5 @@
+org.shenjia.mybatis.paging.LimitOffsetPagingDialect
+org.shenjia.mybatis.paging.DB2PagingDialect
+org.shenjia.mybatis.paging.OffsetFirstPagingDialect
+org.shenjia.mybatis.paging.OraclePagingDialect
+org.shenjia.mybatis.paging.SkipFirstPagingDialect

@@ -9,8 +9,8 @@ import org.springframework.jdbc.core.RowMapper;
 public interface JdbcModel<T> {
 
 	AliasableSqlTable<?> table();
-	
+
 	List<SqlColumn<?>> columns();
-	
+
 	RowMapper<T> rowMapper();
 }

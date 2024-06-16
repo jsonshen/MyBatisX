@@ -16,45 +16,41 @@
 // @formatter:off
 package org.shenjia.mybatis.examples.dao;
 
+import static org.shenjia.mybatis.examples.entity.NoPk.TABLE;
+
 import java.util.Collection;
-import org.mybatis.dynamic.sql.update.UpdateDSL;
-import org.mybatis.dynamic.sql.update.UpdateModel;
-import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
+import org.mybatis.dynamic.sql.SqlBuilder;
 import org.shenjia.mybatis.examples.entity.NoPk;
 import org.shenjia.mybatis.spring.JdbcMapper;
 
 interface NoPkMapper extends JdbcMapper<NoPk> {
-    default int insert(NoPk row) {
-        return MyBatis3Utils.insert(this::insert, row, noPk, c ->
-            c.map(qqNum).toProperty("qqNum")
-            .map(realName).toProperty("realName")
-            .map(nickname).toProperty("nickname")
-            .map(password).toProperty("password")
+    default int insert(String tableName, NoPk record) {
+        return client().insert(SqlBuilder.insert(record)
+        	.into(targetTable(tableName))
+            .map(TABLE.qqNum).toProperty("qqNum")
+            .map(TABLE.realName).toProperty("realName")
+            .map(TABLE.nickname).toProperty("nickname")
+            .map(TABLE.password).toProperty("password")
         );
     }
 
-    default int insertMultiple(Collection<NoPk> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, noPk, c ->
-            c.map(qqNum).toProperty("qqNum")
-            .map(realName).toProperty("realName")
-            .map(nickname).toProperty("nickname")
-            .map(password).toProperty("password")
+    default int insertSelective(String tableName, NoPk record) {
+        return client().insert(SqlBuilder.insert(record)
+        	.into(targetTable(tableName))
+            .map(TABLE.qqNum).toPropertyWhenPresent("qqNum", record::getQqNum)
+            .map(TABLE.realName).toPropertyWhenPresent("realName", record::getRealName)
+            .map(TABLE.nickname).toPropertyWhenPresent("nickname", record::getNickname)
+            .map(TABLE.password).toPropertyWhenPresent("password", record::getPassword)
         );
     }
 
-    default int insertSelective(NoPk row) {
-        return MyBatis3Utils.insert(this::insert, row, noPk, c ->
-            c.map(qqNum).toPropertyWhenPresent("qqNum", row::getQqNum)
-            .map(realName).toPropertyWhenPresent("realName", row::getRealName)
-            .map(nickname).toPropertyWhenPresent("nickname", row::getNickname)
-            .map(password).toPropertyWhenPresent("password", row::getPassword)
+    default int insertMultiple(String tableName, Collection<NoPk> records) {
+        return client().insertMultiple(SqlBuilder.insertMultiple(records)
+        	.into(targetTable(tableName))
+            .map(TABLE.qqNum).toProperty("qqNum")
+            .map(TABLE.realName).toProperty("realName")
+            .map(TABLE.nickname).toProperty("nickname")
+            .map(TABLE.password).toProperty("password")
         );
-    }
-
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(NoPk row, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(qqNum).equalToWhenPresent(row::getQqNum)
-                .set(realName).equalToWhenPresent(row::getRealName)
-                .set(nickname).equalToWhenPresent(row::getNickname)
-                .set(password).equalToWhenPresent(row::getPassword);
     }
 }

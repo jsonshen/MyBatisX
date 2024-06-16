@@ -17,79 +17,106 @@
 package org.shenjia.mybatis.examples.dao;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
+import static org.shenjia.mybatis.examples.entity.MultiColPk.TABLE;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.mybatis.dynamic.sql.update.UpdateDSL;
-import org.mybatis.dynamic.sql.update.UpdateModel;
-import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
+import org.mybatis.dynamic.sql.SqlBuilder;
 import org.shenjia.mybatis.examples.entity.MultiColPk;
 import org.shenjia.mybatis.spring.JdbcMapper;
 
 interface MultiColPkMapper extends JdbcMapper<MultiColPk> {
-    default int deleteByPrimaryKey(Integer qqNum_, String realName_) {
+    default int deleteByPrimaryKey(String tableName, Integer qqNum, String realName) {
+        return delete(tableName, c -> 
+            c.where(TABLE.qqNum, isEqualTo(qqNum))
+            .and(TABLE.realName, isEqualTo(realName))
+        );
+    }
+
+    default int deleteByPrimaryKey(Integer qqNum, String realName) {
         return delete(c -> 
-            c.where(qqNum, isEqualTo(qqNum_))
-            .and(realName, isEqualTo(realName_))
+            c.where(TABLE.qqNum, isEqualTo(qqNum))
+            .and(TABLE.realName, isEqualTo(realName))
         );
     }
 
-    default int insert(MultiColPk row) {
-        return MyBatis3Utils.insert(this::insert, row, multiColPk, c ->
-            c.map(qqNum).toProperty("qqNum")
-            .map(realName).toProperty("realName")
-            .map(nickname).toProperty("nickname")
-            .map(password).toProperty("password")
+    default int insert(String tableName, MultiColPk record) {
+        return client().insert(SqlBuilder.insert(record)
+        	.into(targetTable(tableName))
+            .map(TABLE.qqNum).toProperty("qqNum")
+            .map(TABLE.realName).toProperty("realName")
+            .map(TABLE.nickname).toProperty("nickname")
+            .map(TABLE.password).toProperty("password")
         );
     }
 
-    default int insertMultiple(Collection<MultiColPk> records) {
-        return MyBatis3Utils.insertMultiple(this::insertMultiple, records, multiColPk, c ->
-            c.map(qqNum).toProperty("qqNum")
-            .map(realName).toProperty("realName")
-            .map(nickname).toProperty("nickname")
-            .map(password).toProperty("password")
+    default int insertSelective(String tableName, MultiColPk record) {
+        return client().insert(SqlBuilder.insert(record)
+        	.into(targetTable(tableName))
+            .map(TABLE.qqNum).toPropertyWhenPresent("qqNum", record::getQqNum)
+            .map(TABLE.realName).toPropertyWhenPresent("realName", record::getRealName)
+            .map(TABLE.nickname).toPropertyWhenPresent("nickname", record::getNickname)
+            .map(TABLE.password).toPropertyWhenPresent("password", record::getPassword)
         );
     }
 
-    default int insertSelective(MultiColPk row) {
-        return MyBatis3Utils.insert(this::insert, row, multiColPk, c ->
-            c.map(qqNum).toPropertyWhenPresent("qqNum", row::getQqNum)
-            .map(realName).toPropertyWhenPresent("realName", row::getRealName)
-            .map(nickname).toPropertyWhenPresent("nickname", row::getNickname)
-            .map(password).toPropertyWhenPresent("password", row::getPassword)
+    default int insertMultiple(String tableName, Collection<MultiColPk> records) {
+        return client().insertMultiple(SqlBuilder.insertMultiple(records)
+        	.into(targetTable(tableName))
+            .map(TABLE.qqNum).toProperty("qqNum")
+            .map(TABLE.realName).toProperty("realName")
+            .map(TABLE.nickname).toProperty("nickname")
+            .map(TABLE.password).toProperty("password")
         );
     }
 
-    default Optional<MultiColPk> selectByPrimaryKey(Integer qqNum_, String realName_) {
+    default Optional<MultiColPk> selectByPrimaryKey(Integer qqNum, String realName) {
         return selectOne(c ->
-            c.where(qqNum, isEqualTo(qqNum_))
-            .and(realName, isEqualTo(realName_))
+            c.where(TABLE.qqNum, isEqualTo(qqNum))
+            .and(TABLE.realName, isEqualTo(realName))
         );
     }
 
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(MultiColPk row, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(qqNum).equalToWhenPresent(row::getQqNum)
-                .set(realName).equalToWhenPresent(row::getRealName)
-                .set(nickname).equalToWhenPresent(row::getNickname)
-                .set(password).equalToWhenPresent(row::getPassword);
-    }
-
-    default int updateByPrimaryKey(MultiColPk row) {
-        return update(c ->
-            c.set(nickname).equalTo(row::getNickname)
-            .set(password).equalTo(row::getPassword)
-            .where(qqNum, isEqualTo(row::getQqNum))
-            .and(realName, isEqualTo(row::getRealName))
+    default Optional<MultiColPk> selectByPrimaryKey(String tableName, Integer qqNum, String realName) {
+        return selectOne(tableName, c ->
+            c.where(TABLE.qqNum, isEqualTo(qqNum))
+            .and(TABLE.realName, isEqualTo(realName))
         );
     }
 
-    default int updateByPrimaryKeySelective(MultiColPk row) {
+    default int updateByPrimaryKey(String tableName, MultiColPk record) {
+        return update(tableName, c ->
+            c.set(TABLE.nickname).equalTo(record::getNickname)
+            .set(TABLE.password).equalTo(record::getPassword)
+            .where(TABLE.qqNum, isEqualTo(record::getQqNum))
+            .and(TABLE.realName, isEqualTo(record::getRealName))
+        );
+    }
+
+    default int updateByPrimaryKey(MultiColPk record) {
         return update(c ->
-            c.set(nickname).equalToWhenPresent(row::getNickname)
-            .set(password).equalToWhenPresent(row::getPassword)
-            .where(qqNum, isEqualTo(row::getQqNum))
-            .and(realName, isEqualTo(row::getRealName))
+            c.set(TABLE.nickname).equalTo(record::getNickname)
+            .set(TABLE.password).equalTo(record::getPassword)
+            .where(TABLE.qqNum, isEqualTo(record::getQqNum))
+            .and(TABLE.realName, isEqualTo(record::getRealName))
+        );
+    }
+
+    default int updateByPrimaryKeySelective(MultiColPk record) {
+        return update(c ->
+            c.set(TABLE.nickname).equalToWhenPresent(record::getNickname)
+            .set(TABLE.password).equalToWhenPresent(record::getPassword)
+            .where(TABLE.qqNum, isEqualTo(record::getQqNum))
+            .and(TABLE.realName, isEqualTo(record::getRealName))
+        );
+    }
+
+    default int updateByPrimaryKeySelective(String tableName, MultiColPk record) {
+        return update(c ->
+            c.set(TABLE.nickname).equalToWhenPresent(record::getNickname)
+            .set(TABLE.password).equalToWhenPresent(record::getPassword)
+            .where(TABLE.qqNum, isEqualTo(record::getQqNum))
+            .and(TABLE.realName, isEqualTo(record::getRealName))
         );
     }
 }
