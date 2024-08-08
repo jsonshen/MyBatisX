@@ -50,9 +50,13 @@ import org.mybatis.generator.internal.util.JavaBeansUtil;
  * getters/setters. It does not support the immutable model, or constructor
  * based attributes.
  *
- * @author Jeff Butler
+ * @author Jason Shen
  */
 public class SpringJdbcDynamicSqlModelGenerator extends AbstractJavaGenerator {
+	
+	private static final FullyQualifiedJavaType BIG_DECIMAL_TYPE = new FullyQualifiedJavaType("java.math.BigDecimal");
+	private static final FullyQualifiedJavaType BYTE_ARRAY_TYPE = new FullyQualifiedJavaType("byte[]");
+	private static final FullyQualifiedJavaType BYTE_TYPE = new FullyQualifiedJavaType("byte");
 
 	public SpringJdbcDynamicSqlModelGenerator(String project) {
 		super(project);
@@ -154,9 +158,9 @@ public class SpringJdbcDynamicSqlModelGenerator extends AbstractJavaGenerator {
 		List<IntrospectedColumn> columns = introspectedTable.getAllColumns();
 		for (IntrospectedColumn col : columns) {
 			sb.setLength(0);
-			sb.append("this."); //$NON-NLS-1$
+			sb.append("this.");
 			sb.append(col.getJavaProperty());
-			sb.append(" = "); //$NON-NLS-1$
+			sb.append(" = ");
 			sb.append(col.getJavaProperty());
 			sb.append(';');
 			method.addBodyLine(sb.toString());
@@ -196,25 +200,31 @@ public class SpringJdbcDynamicSqlModelGenerator extends AbstractJavaGenerator {
 		List<IntrospectedColumn> columns = introspectedTable.getAllColumns();
 		for (IntrospectedColumn col : columns) {
 			buf.setLength(0);
-			buf.append("record."); //$NON-NLS-1$
+			buf.append("record.");
 			buf.append(JavaBeansUtil.getSetterMethodName(col.getJavaProperty()));
 			FullyQualifiedJavaType javaType = col.getFullyQualifiedJavaType();
 			if (javaType.equals(FullyQualifiedJavaType.getStringInstance())) {
-				buf.append("(rs.getString(\""); //$NON-NLS-1$
+				buf.append("(rs.getString(\"");
 			} else if (javaType.equals(PrimitiveTypeWrapper.getIntegerInstance())) {
-				buf.append("(rs.getInt(\""); //$NON-NLS-1$
+				buf.append("(rs.getInt(\"");
 			} else if (javaType.equals(PrimitiveTypeWrapper.getLongInstance())) {
-				buf.append("(rs.getLong(\""); //$NON-NLS-1$
+				buf.append("(rs.getLong(\"");
 			} else if (javaType.equals(PrimitiveTypeWrapper.getShortInstance())) {
-				buf.append("(rs.getShort(\""); //$NON-NLS-1$
+				buf.append("(rs.getShort(\"");
 			} else if (javaType.equals(PrimitiveTypeWrapper.getFloatInstance())) {
-				buf.append("(rs.getFloat(\""); //$NON-NLS-1$
+				buf.append("(rs.getFloat(\"");
 			} else if (javaType.equals(PrimitiveTypeWrapper.getBooleanInstance())) {
-				buf.append("(rs.getBoolean(\""); //$NON-NLS-1$
+				buf.append("(rs.getBoolean(\"");
 			} else if (javaType.equals(PrimitiveTypeWrapper.getDateInstance())) {
-				buf.append("(rs.getDate(\""); //$NON-NLS-1$
+				buf.append("(rs.getDate(\"");
+			} else if (javaType.equals(BIG_DECIMAL_TYPE)) {
+				buf.append("(rs.getBigDecimal(\"");
+			} else if (javaType.equals(BYTE_ARRAY_TYPE)) {
+				buf.append("(rs.getBytes(\"");
+			} else if (javaType.equals(BYTE_TYPE)) {
+				buf.append("(rs.getByte(\"");
 			} else {
-				buf.append("(rs.getObject(\""); //$NON-NLS-1$
+				buf.append("(rs.getObject(\"");
 			}
 			buf.append(col.getActualColumnName());
 			buf.append("\"));");

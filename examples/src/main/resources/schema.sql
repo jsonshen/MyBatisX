@@ -2,7 +2,8 @@ create table if not exists no_pk (
     qq_num int not null,
     real_name varchar(50),
     nickname varchar(50),
-    password varchar(50)
+    password varchar(50),
+    balance decimal(12,2)
 );
 
 create table if not exists single_col_pk (
@@ -10,6 +11,7 @@ create table if not exists single_col_pk (
     real_name varchar(50),
     nickname varchar(50),
     password varchar(50),
+    balance decimal(12,2),
     primary key (qq_num)
 );
 
@@ -18,5 +20,6 @@ create table if not exists multi_col_pk (
     real_name varchar(50),
     nickname varchar(50),
     password varchar(50),
+    balance decimal(12,2),
     primary key (qq_num, real_name)
 );

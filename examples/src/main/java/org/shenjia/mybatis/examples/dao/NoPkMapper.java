@@ -1,3 +1,4 @@
+// @formatter:off
 /*
  * Copyright 2015-2023 the original author or authors.
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @formatter:off
 package org.shenjia.mybatis.examples.dao;
 
 import static org.shenjia.mybatis.examples.entity.NoPk.TABLE;
@@ -24,6 +24,7 @@ import org.shenjia.mybatis.examples.entity.NoPk;
 import org.shenjia.mybatis.spring.JdbcMapper;
 
 interface NoPkMapper extends JdbcMapper<NoPk> {
+
     default int insert(String tableName, NoPk record) {
         return client().insert(SqlBuilder.insert(record)
         	.into(targetTable(tableName))
@@ -31,6 +32,7 @@ interface NoPkMapper extends JdbcMapper<NoPk> {
             .map(TABLE.realName).toProperty("realName")
             .map(TABLE.nickname).toProperty("nickname")
             .map(TABLE.password).toProperty("password")
+            .map(TABLE.balance).toProperty("balance")
         );
     }
 
@@ -41,6 +43,7 @@ interface NoPkMapper extends JdbcMapper<NoPk> {
             .map(TABLE.realName).toPropertyWhenPresent("realName", record::getRealName)
             .map(TABLE.nickname).toPropertyWhenPresent("nickname", record::getNickname)
             .map(TABLE.password).toPropertyWhenPresent("password", record::getPassword)
+            .map(TABLE.balance).toPropertyWhenPresent("balance", record::getBalance)
         );
     }
 
@@ -51,6 +54,7 @@ interface NoPkMapper extends JdbcMapper<NoPk> {
             .map(TABLE.realName).toProperty("realName")
             .map(TABLE.nickname).toProperty("nickname")
             .map(TABLE.password).toProperty("password")
+            .map(TABLE.balance).toProperty("balance")
         );
     }
 }

@@ -1,3 +1,4 @@
+// @formatter:off
 /*
  * Copyright 2015-2023 the original author or authors.
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @formatter:off
 package org.shenjia.mybatis.examples.dao;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
@@ -26,6 +26,7 @@ import org.shenjia.mybatis.examples.entity.MultiColPk;
 import org.shenjia.mybatis.spring.JdbcMapper;
 
 interface MultiColPkMapper extends JdbcMapper<MultiColPk> {
+
     default int deleteByPrimaryKey(String tableName, Integer qqNum, String realName) {
         return delete(tableName, c -> 
             c.where(TABLE.qqNum, isEqualTo(qqNum))
@@ -47,6 +48,7 @@ interface MultiColPkMapper extends JdbcMapper<MultiColPk> {
             .map(TABLE.realName).toProperty("realName")
             .map(TABLE.nickname).toProperty("nickname")
             .map(TABLE.password).toProperty("password")
+            .map(TABLE.balance).toProperty("balance")
         );
     }
 
@@ -57,6 +59,7 @@ interface MultiColPkMapper extends JdbcMapper<MultiColPk> {
             .map(TABLE.realName).toPropertyWhenPresent("realName", record::getRealName)
             .map(TABLE.nickname).toPropertyWhenPresent("nickname", record::getNickname)
             .map(TABLE.password).toPropertyWhenPresent("password", record::getPassword)
+            .map(TABLE.balance).toPropertyWhenPresent("balance", record::getBalance)
         );
     }
 
@@ -67,6 +70,7 @@ interface MultiColPkMapper extends JdbcMapper<MultiColPk> {
             .map(TABLE.realName).toProperty("realName")
             .map(TABLE.nickname).toProperty("nickname")
             .map(TABLE.password).toProperty("password")
+            .map(TABLE.balance).toProperty("balance")
         );
     }
 
@@ -88,6 +92,7 @@ interface MultiColPkMapper extends JdbcMapper<MultiColPk> {
         return update(tableName, c ->
             c.set(TABLE.nickname).equalTo(record::getNickname)
             .set(TABLE.password).equalTo(record::getPassword)
+            .set(TABLE.balance).equalTo(record::getBalance)
             .where(TABLE.qqNum, isEqualTo(record::getQqNum))
             .and(TABLE.realName, isEqualTo(record::getRealName))
         );
@@ -97,6 +102,7 @@ interface MultiColPkMapper extends JdbcMapper<MultiColPk> {
         return update(c ->
             c.set(TABLE.nickname).equalTo(record::getNickname)
             .set(TABLE.password).equalTo(record::getPassword)
+            .set(TABLE.balance).equalTo(record::getBalance)
             .where(TABLE.qqNum, isEqualTo(record::getQqNum))
             .and(TABLE.realName, isEqualTo(record::getRealName))
         );
@@ -106,6 +112,7 @@ interface MultiColPkMapper extends JdbcMapper<MultiColPk> {
         return update(c ->
             c.set(TABLE.nickname).equalToWhenPresent(record::getNickname)
             .set(TABLE.password).equalToWhenPresent(record::getPassword)
+            .set(TABLE.balance).equalToWhenPresent(record::getBalance)
             .where(TABLE.qqNum, isEqualTo(record::getQqNum))
             .and(TABLE.realName, isEqualTo(record::getRealName))
         );
@@ -115,6 +122,7 @@ interface MultiColPkMapper extends JdbcMapper<MultiColPk> {
         return update(c ->
             c.set(TABLE.nickname).equalToWhenPresent(record::getNickname)
             .set(TABLE.password).equalToWhenPresent(record::getPassword)
+            .set(TABLE.balance).equalToWhenPresent(record::getBalance)
             .where(TABLE.qqNum, isEqualTo(record::getQqNum))
             .and(TABLE.realName, isEqualTo(record::getRealName))
         );

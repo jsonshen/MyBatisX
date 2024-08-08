@@ -1,3 +1,4 @@
+// @formatter:off
 /*
  * Copyright 2015-2023 the original author or authors.
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @formatter:off
 package org.shenjia.mybatis.examples.dao;
 
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
@@ -26,14 +26,15 @@ import org.shenjia.mybatis.examples.entity.SingleColPk;
 import org.shenjia.mybatis.spring.JdbcMapper;
 
 interface SingleColPkMapper extends JdbcMapper<SingleColPk> {
-    default int deleteByPrimaryKey(Integer qqNum) {
-        return delete(c -> 
+
+    default int deleteByPrimaryKey(String tableName, Integer qqNum) {
+        return delete(tableName, c -> 
             c.where(TABLE.qqNum, isEqualTo(qqNum))
         );
     }
 
-    default int deleteByPrimaryKey(String tableName, Integer qqNum) {
-        return delete(tableName, c -> 
+    default int deleteByPrimaryKey(Integer qqNum) {
+        return delete(c -> 
             c.where(TABLE.qqNum, isEqualTo(qqNum))
         );
     }
@@ -45,6 +46,7 @@ interface SingleColPkMapper extends JdbcMapper<SingleColPk> {
             .map(TABLE.realName).toProperty("realName")
             .map(TABLE.nickname).toProperty("nickname")
             .map(TABLE.password).toProperty("password")
+            .map(TABLE.balance).toProperty("balance")
         );
     }
 
@@ -55,6 +57,7 @@ interface SingleColPkMapper extends JdbcMapper<SingleColPk> {
             .map(TABLE.realName).toPropertyWhenPresent("realName", record::getRealName)
             .map(TABLE.nickname).toPropertyWhenPresent("nickname", record::getNickname)
             .map(TABLE.password).toPropertyWhenPresent("password", record::getPassword)
+            .map(TABLE.balance).toPropertyWhenPresent("balance", record::getBalance)
         );
     }
 
@@ -65,6 +68,7 @@ interface SingleColPkMapper extends JdbcMapper<SingleColPk> {
             .map(TABLE.realName).toProperty("realName")
             .map(TABLE.nickname).toProperty("nickname")
             .map(TABLE.password).toProperty("password")
+            .map(TABLE.balance).toProperty("balance")
         );
     }
 
@@ -85,6 +89,7 @@ interface SingleColPkMapper extends JdbcMapper<SingleColPk> {
             c.set(TABLE.realName).equalTo(record::getRealName)
             .set(TABLE.nickname).equalTo(record::getNickname)
             .set(TABLE.password).equalTo(record::getPassword)
+            .set(TABLE.balance).equalTo(record::getBalance)
             .where(TABLE.qqNum, isEqualTo(record::getQqNum))
         );
     }
@@ -94,15 +99,7 @@ interface SingleColPkMapper extends JdbcMapper<SingleColPk> {
             c.set(TABLE.realName).equalTo(record::getRealName)
             .set(TABLE.nickname).equalTo(record::getNickname)
             .set(TABLE.password).equalTo(record::getPassword)
-            .where(TABLE.qqNum, isEqualTo(record::getQqNum))
-        );
-    }
-
-    default int updateByPrimaryKeySelective(String tableName, SingleColPk record) {
-        return update(c ->
-            c.set(TABLE.realName).equalToWhenPresent(record::getRealName)
-            .set(TABLE.nickname).equalToWhenPresent(record::getNickname)
-            .set(TABLE.password).equalToWhenPresent(record::getPassword)
+            .set(TABLE.balance).equalTo(record::getBalance)
             .where(TABLE.qqNum, isEqualTo(record::getQqNum))
         );
     }
@@ -112,6 +109,17 @@ interface SingleColPkMapper extends JdbcMapper<SingleColPk> {
             c.set(TABLE.realName).equalToWhenPresent(record::getRealName)
             .set(TABLE.nickname).equalToWhenPresent(record::getNickname)
             .set(TABLE.password).equalToWhenPresent(record::getPassword)
+            .set(TABLE.balance).equalToWhenPresent(record::getBalance)
+            .where(TABLE.qqNum, isEqualTo(record::getQqNum))
+        );
+    }
+
+    default int updateByPrimaryKeySelective(String tableName, SingleColPk record) {
+        return update(c ->
+            c.set(TABLE.realName).equalToWhenPresent(record::getRealName)
+            .set(TABLE.nickname).equalToWhenPresent(record::getNickname)
+            .set(TABLE.password).equalToWhenPresent(record::getPassword)
+            .set(TABLE.balance).equalToWhenPresent(record::getBalance)
             .where(TABLE.qqNum, isEqualTo(record::getQqNum))
         );
     }

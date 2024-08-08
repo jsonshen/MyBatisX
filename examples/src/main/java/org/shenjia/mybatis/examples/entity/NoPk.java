@@ -1,3 +1,4 @@
+// @formatter:off
 /*
  * Copyright 2015-2023 the original author or authors.
  *
@@ -13,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @formatter:off
 package org.shenjia.mybatis.examples.entity;
 
+import java.math.BigDecimal;
 import java.sql.JDBCType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,8 @@ public class NoPk implements JdbcModel<NoPk> {
     private String nickname;
 
     private String password;
+
+    private BigDecimal balance;
 
     public Integer getQqNum() {
         return qqNum;
@@ -69,6 +72,14 @@ public class NoPk implements JdbcModel<NoPk> {
         this.password = password == null ? null : password.trim();
     }
 
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
     @Override
     public RowMapper<NoPk> rowMapper() {
         return (rs, rowNum) -> {
@@ -77,6 +88,7 @@ public class NoPk implements JdbcModel<NoPk> {
             record.setRealName(rs.getString("REAL_NAME"));
             record.setNickname(rs.getString("NICKNAME"));
             record.setPassword(rs.getString("PASSWORD"));
+            record.setBalance(rs.getBigDecimal("BALANCE"));
             return record;
         };
     }
@@ -106,7 +118,8 @@ public class NoPk implements JdbcModel<NoPk> {
         return (this.getQqNum() == null ? other.getQqNum() == null : this.getQqNum().equals(other.getQqNum()))
             && (this.getRealName() == null ? other.getRealName() == null : this.getRealName().equals(other.getRealName()))
             && (this.getNickname() == null ? other.getNickname() == null : this.getNickname().equals(other.getNickname()))
-            && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()));
+            && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
+            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()));
     }
 
     @Override
@@ -117,6 +130,7 @@ public class NoPk implements JdbcModel<NoPk> {
         result = prime * result + ((getRealName() == null) ? 0 : getRealName().hashCode());
         result = prime * result + ((getNickname() == null) ? 0 : getNickname().hashCode());
         result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
+        result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
         return result;
     }
 
@@ -131,6 +145,7 @@ public class NoPk implements JdbcModel<NoPk> {
         sb.append(", realName=").append(realName);
         sb.append(", nickname=").append(nickname);
         sb.append(", password=").append(password);
+        sb.append(", balance=").append(balance);
         sb.append("]");
         return sb.toString();
     }
@@ -147,6 +162,8 @@ public class NoPk implements JdbcModel<NoPk> {
 
         public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
 
+        public final SqlColumn<BigDecimal> balance = column("BALANCE", JDBCType.DECIMAL);
+
         public Table() {
             super("NO_PK", Table::new);
             List<SqlColumn<?>> list = new ArrayList<>();
@@ -154,6 +171,7 @@ public class NoPk implements JdbcModel<NoPk> {
             list.add(realName);
             list.add(nickname);
             list.add(password);
+            list.add(balance);
             this.columns = Collections.unmodifiableList(list);
         }
     }

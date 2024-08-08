@@ -1,3 +1,4 @@
+// @formatter:off
 /*
  * Copyright 2015-2023 the original author or authors.
  *
@@ -13,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @formatter:off
 package org.shenjia.mybatis.examples.entity;
 
+import java.math.BigDecimal;
 import java.sql.JDBCType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,8 @@ public class MultiColPk implements JdbcModel<MultiColPk> {
     private String nickname;
 
     private String password;
+
+    private BigDecimal balance;
 
     public Integer getQqNum() {
         return qqNum;
@@ -69,6 +72,14 @@ public class MultiColPk implements JdbcModel<MultiColPk> {
         this.password = password == null ? null : password.trim();
     }
 
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
     @Override
     public RowMapper<MultiColPk> rowMapper() {
         return (rs, rowNum) -> {
@@ -77,6 +88,7 @@ public class MultiColPk implements JdbcModel<MultiColPk> {
             record.setRealName(rs.getString("REAL_NAME"));
             record.setNickname(rs.getString("NICKNAME"));
             record.setPassword(rs.getString("PASSWORD"));
+            record.setBalance(rs.getBigDecimal("BALANCE"));
             return record;
         };
     }
@@ -127,6 +139,7 @@ public class MultiColPk implements JdbcModel<MultiColPk> {
         sb.append(", realName=").append(realName);
         sb.append(", nickname=").append(nickname);
         sb.append(", password=").append(password);
+        sb.append(", balance=").append(balance);
         sb.append("]");
         return sb.toString();
     }
@@ -143,6 +156,8 @@ public class MultiColPk implements JdbcModel<MultiColPk> {
 
         public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
 
+        public final SqlColumn<BigDecimal> balance = column("BALANCE", JDBCType.DECIMAL);
+
         public Table() {
             super("MULTI_COL_PK", Table::new);
             List<SqlColumn<?>> list = new ArrayList<>();
@@ -150,6 +165,7 @@ public class MultiColPk implements JdbcModel<MultiColPk> {
             list.add(realName);
             list.add(nickname);
             list.add(password);
+            list.add(balance);
             this.columns = Collections.unmodifiableList(list);
         }
     }
