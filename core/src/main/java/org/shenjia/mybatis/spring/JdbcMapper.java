@@ -1,6 +1,6 @@
 package org.shenjia.mybatis.spring;
 
-import static org.mybatis.dynamic.sql.SqlBuilder.countFrom;
+import static org.mybatis.dynamic.sql.SqlBuilder.countColumn;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
 import java.util.Collection;
@@ -21,9 +21,10 @@ import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.mybatis.dynamic.sql.update.UpdateDSLCompleter;
 import org.mybatis.dynamic.sql.util.Buildable;
 import org.mybatis.dynamic.sql.where.WhereApplier;
+import org.shenjia.mybatis.paging.DialectAdapter;
 import org.shenjia.mybatis.paging.Page;
 import org.shenjia.mybatis.paging.Pageable;
-import org.shenjia.mybatis.paging.DialectAdapter;
+import org.shenjia.mybatis.sql.Columns;
 import org.springframework.util.StringUtils;
 
 public interface JdbcMapper<T extends JdbcModel<T>> {
@@ -83,11 +84,11 @@ public interface JdbcMapper<T extends JdbcModel<T>> {
 
 	default Page<T> selectPage(String tableName, List<? extends BasicColumn> columns, Pageable pageable,
 	    WhereApplier where, SortSpecification... sorts) {
-		CountDSL<SelectModel> countStmt = CountDSL.countFrom(targetTable(tableName));
+		CountDSL<SelectModel> stmt = countColumn(Columns.ONE).from(targetTable(tableName));
 		if (null != where) {
-			countStmt.applyWhere(where);
+			stmt.applyWhere(where);
 		}
-		long total = client().count(countStmt);
+		long total = client().count(stmt);
 		Page<T> page = new Page<>(pageable.getCurrentPage(), pageable.getPageSize(), total);
 		if (total > 0 && ((page.getCurrentPage() - 1) * page.getPageSize() < total)) {
 			page.setData(selectRange(tableName, columns, pageable, where, sorts));
@@ -106,9 +107,9 @@ public interface JdbcMapper<T extends JdbcModel<T>> {
 
 	default List<T> selectRange(String tableName, List<? extends BasicColumn> columns, Pageable pageable,
 	    WhereApplier where, SortSpecification... sorts) {
-		SelectStatementProvider selectStmt = DialectAdapter.adapt(client().getMetadata(),
+		SelectStatementProvider stmt = DialectAdapter.adapt(client().getMetadata(),
 		    RenderingStrategies.SPRING_NAMED_PARAMETER, pageable, columns, targetTable(tableName), where, sorts);
-		return client().selectList(selectStmt, model().rowMapper());
+		return client().selectList(stmt, model().rowMapper());
 	}
 
 	default long count(CountDSLCompleter completer) {
@@ -120,7 +121,7 @@ public interface JdbcMapper<T extends JdbcModel<T>> {
 		if (StringUtils.hasText(tableName)) {
 			table = table.withName(tableName);
 		}
-		return client().count(completer.apply(countFrom(table)));
+		return client().count(completer.apply(countColumn(Columns.ONE).from(table)));
 	}
 
 	default int delete(DeleteDSLCompleter completer) {
