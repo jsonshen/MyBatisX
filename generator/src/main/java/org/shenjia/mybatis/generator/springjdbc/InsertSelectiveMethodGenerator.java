@@ -28,11 +28,15 @@ import org.mybatis.generator.codegen.mybatis3.ListUtilities;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
 
 public class InsertSelectiveMethodGenerator extends AbstractMethodGenerator {
+	
     private final FullyQualifiedJavaType recordType;
+    private final String tableFieldName;
 
     private InsertSelectiveMethodGenerator(Builder builder) {
         super(builder);
-        recordType = builder.recordType;
+        this.recordType = builder.recordType;
+        this.tableFieldName = builder.getTableFieldName();
+        
     }
 
 	@Override
@@ -52,14 +56,13 @@ public class InsertSelectiveMethodGenerator extends AbstractMethodGenerator {
 		List<IntrospectedColumn> columns = ListUtilities
 		    .removeIdentityAndGeneratedAlwaysColumns(introspectedTable.getAllColumns());
 		for (IntrospectedColumn column : columns) {
-			String fieldName = calculateFieldName(column);
+			String fieldName = column.getActualColumnName();
 			if (column.isSequenceColumn()) {
-				method
-				    .addBodyLine("    .map(TABLE." + fieldName + ").toProperty(\"" + column.getJavaProperty() + "\")");
+				method.addBodyLine("    .map(" + tableFieldName + "." + fieldName + ").toProperty(\"" + column.getJavaProperty() + "\")");
 			} else {
 				String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 				    column.getFullyQualifiedJavaType());
-				method.addBodyLine("    .map(TABLE." + fieldName + ")" + ".toPropertyWhenPresent(\""
+				method.addBodyLine("    .map(" + tableFieldName + "." + fieldName + ")" + ".toPropertyWhenPresent(\""
 				    + column.getJavaProperty() + "\", record::" + methodName + ")");
 			}
 		}
@@ -67,7 +70,7 @@ public class InsertSelectiveMethodGenerator extends AbstractMethodGenerator {
 
 		return MethodsAndImports.withMethod(method)
 		    .withImports(imports)
-		    .withStaticImport(recordType.getFullyQualifiedName() + ".TABLE")
+		    .withStaticImport(recordType.getFullyQualifiedName() + "." + tableFieldName)
 		    .build();
 	}
 

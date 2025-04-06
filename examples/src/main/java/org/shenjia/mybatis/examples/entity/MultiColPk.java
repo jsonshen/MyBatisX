@@ -28,7 +28,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 public class MultiColPk implements JdbcModel<MultiColPk> {
 
-    public static final Table TABLE = new Table();
+    public static final Table MULTI_COL_PK = new Table();
 
     private Integer qqNum;
 
@@ -95,12 +95,12 @@ public class MultiColPk implements JdbcModel<MultiColPk> {
 
     @Override
     public Table table() {
-        return TABLE;
+        return MULTI_COL_PK;
     }
 
     @Override
     public List<SqlColumn<?>> columns() {
-        return TABLE.columns;
+        return MULTI_COL_PK.columns;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class MultiColPk implements JdbcModel<MultiColPk> {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", TABLE=").append(TABLE);
+        sb.append(", MULTI_COL_PK=").append(MULTI_COL_PK);
         sb.append(", qqNum=").append(qqNum);
         sb.append(", realName=").append(realName);
         sb.append(", nickname=").append(nickname);
@@ -148,24 +148,24 @@ public class MultiColPk implements JdbcModel<MultiColPk> {
 
         public final List<SqlColumn<?>> columns;
 
-        public final SqlColumn<Integer> qqNum = column("QQ_NUM", JDBCType.INTEGER);
+        public final SqlColumn<Integer> QQ_NUM = column("QQ_NUM", JDBCType.INTEGER);
 
-        public final SqlColumn<String> realName = column("REAL_NAME", JDBCType.VARCHAR);
+        public final SqlColumn<String> REAL_NAME = column("REAL_NAME", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> nickname = column("NICKNAME", JDBCType.VARCHAR);
+        public final SqlColumn<String> NICKNAME = column("NICKNAME", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
+        public final SqlColumn<String> PASSWORD = column("PASSWORD", JDBCType.VARCHAR);
 
-        public final SqlColumn<BigDecimal> balance = column("BALANCE", JDBCType.DECIMAL);
+        public final SqlColumn<BigDecimal> BALANCE = column("BALANCE", JDBCType.DECIMAL);
 
         public Table() {
             super("MULTI_COL_PK", Table::new);
             List<SqlColumn<?>> list = new ArrayList<>();
-            list.add(qqNum);
-            list.add(realName);
-            list.add(nickname);
-            list.add(password);
-            list.add(balance);
+            list.add(QQ_NUM);
+            list.add(REAL_NAME);
+            list.add(NICKNAME);
+            list.add(PASSWORD);
+            list.add(BALANCE);
             this.columns = Collections.unmodifiableList(list);
         }
     }

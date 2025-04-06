@@ -43,7 +43,7 @@ public class DeleteByPrimaryKeyMethodGenerator extends AbstractMethodGenerator {
 		Set<Method> methods = new HashSet<>();
 		
 		staticImports.add("org.mybatis.dynamic.sql.SqlBuilder.isEqualTo");
-		staticImports.add(introspectedTable.getBaseRecordType() + ".TABLE");
+		staticImports.add(introspectedTable.getBaseRecordType() + "." + fragmentGenerator.getTableFieldName());
 		
 		MethodParts methodParts = fragmentGenerator.getPrimaryKeyWhereClauseAndParameters();
 		imports.addAll(methodParts.getImports());

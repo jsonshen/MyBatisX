@@ -30,6 +30,7 @@ import java.util.List;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.FullyQualifiedTable;
 import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.Plugin;
 import org.mybatis.generator.api.dom.java.CompilationUnit;
 import org.mybatis.generator.api.dom.java.Field;
@@ -57,9 +58,17 @@ public class SpringJdbcDynamicSqlModelGenerator extends AbstractJavaGenerator {
 	private static final FullyQualifiedJavaType BIG_DECIMAL_TYPE = new FullyQualifiedJavaType("java.math.BigDecimal");
 	private static final FullyQualifiedJavaType BYTE_ARRAY_TYPE = new FullyQualifiedJavaType("byte[]");
 	private static final FullyQualifiedJavaType BYTE_TYPE = new FullyQualifiedJavaType("byte");
+	
+	private String tableName;
 
 	public SpringJdbcDynamicSqlModelGenerator(String project) {
 		super(project);
+	}
+	
+	@Override
+	public void setIntrospectedTable(IntrospectedTable introspectedTable) {
+		super.setIntrospectedTable(introspectedTable);
+		this.tableName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
 	}
 
 	@Override
@@ -175,7 +184,7 @@ public class SpringJdbcDynamicSqlModelGenerator extends AbstractJavaGenerator {
 		modelClass
 		    .addSuperInterface(new FullyQualifiedJavaType("JdbcModel<" + modelClass.getType().getShortName() + ">"));
 
-		Field tableField = new Field("TABLE", new FullyQualifiedJavaType("Table"));
+		Field tableField = new Field(tableName, new FullyQualifiedJavaType("Table"));
 		tableField.addJavaDocLine("");
 		tableField.setFinal(true);
 		tableField.setStatic(true);
@@ -241,7 +250,7 @@ public class SpringJdbcDynamicSqlModelGenerator extends AbstractJavaGenerator {
 		method.addAnnotation("@Override");
 		method.setVisibility(JavaVisibility.PUBLIC);
 		method.setReturnType(new FullyQualifiedJavaType("Table"));
-		method.addBodyLine("return TABLE;");
+		method.addBodyLine("return " + tableName + ";");
 		modelClass.addMethod(method);
 	}
 
@@ -252,7 +261,7 @@ public class SpringJdbcDynamicSqlModelGenerator extends AbstractJavaGenerator {
 		method.addAnnotation("@Override");
 		method.setVisibility(JavaVisibility.PUBLIC);
 		method.setReturnType(new FullyQualifiedJavaType("List<SqlColumn<?>>"));
-		method.addBodyLine("return TABLE.columns;");
+		method.addBodyLine("return " + tableName + ".columns;");
 		modelClass.addMethod(method);
 	}
 
@@ -286,7 +295,7 @@ public class SpringJdbcDynamicSqlModelGenerator extends AbstractJavaGenerator {
 		List<IntrospectedColumn> columns = introspectedTable.getAllColumns();
 		for (IntrospectedColumn column : columns) {
 			addTableField(modelClass, tableClass, column);
-			constructor.addBodyLine("list.add(" + column.getJavaProperty() + ");");
+			constructor.addBodyLine("list.add(" + column.getActualColumnName() + ");");
 		}
 
 		constructor.addBodyLine("this.columns = Collections.unmodifiableList(list);");
@@ -301,7 +310,7 @@ public class SpringJdbcDynamicSqlModelGenerator extends AbstractJavaGenerator {
 		} else {
 			javaType = column.getFullyQualifiedJavaType();
 		}
-		Field field = new Field(column.getJavaProperty(), calcTableFieldType(javaType));
+		Field field = new Field(column.getActualColumnName(), calcTableFieldType(javaType));
 		field.setVisibility(JavaVisibility.PUBLIC);
 		field.setFinal(true);
 		field.setInitializationString(calcTableFieldInitStr(column, javaType));

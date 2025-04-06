@@ -16,7 +16,7 @@
  */
 package org.shenjia.mybatis.examples.dao;
 
-import static org.shenjia.mybatis.examples.entity.NoPk.TABLE;
+import static org.shenjia.mybatis.examples.entity.NoPk.NO_PK;
 
 import java.util.Collection;
 import org.mybatis.dynamic.sql.SqlBuilder;
@@ -28,33 +28,33 @@ interface NoPkMapper extends JdbcMapper<NoPk> {
     default int insert(String tableName, NoPk record) {
         return client().insert(SqlBuilder.insert(record)
         	.into(targetTable(tableName))
-            .map(TABLE.qqNum).toProperty("qqNum")
-            .map(TABLE.realName).toProperty("realName")
-            .map(TABLE.nickname).toProperty("nickname")
-            .map(TABLE.password).toProperty("password")
-            .map(TABLE.balance).toProperty("balance")
+            .map(NO_PK.QQ_NUM).toProperty("qqNum")
+            .map(NO_PK.REAL_NAME).toProperty("realName")
+            .map(NO_PK.NICKNAME).toProperty("nickname")
+            .map(NO_PK.PASSWORD).toProperty("password")
+            .map(NO_PK.BALANCE).toProperty("balance")
         );
     }
 
     default int insertSelective(String tableName, NoPk record) {
         return client().insert(SqlBuilder.insert(record)
         	.into(targetTable(tableName))
-            .map(TABLE.qqNum).toPropertyWhenPresent("qqNum", record::getQqNum)
-            .map(TABLE.realName).toPropertyWhenPresent("realName", record::getRealName)
-            .map(TABLE.nickname).toPropertyWhenPresent("nickname", record::getNickname)
-            .map(TABLE.password).toPropertyWhenPresent("password", record::getPassword)
-            .map(TABLE.balance).toPropertyWhenPresent("balance", record::getBalance)
+            .map(NO_PK.QQ_NUM).toPropertyWhenPresent("qqNum", record::getQqNum)
+            .map(NO_PK.REAL_NAME).toPropertyWhenPresent("realName", record::getRealName)
+            .map(NO_PK.NICKNAME).toPropertyWhenPresent("nickname", record::getNickname)
+            .map(NO_PK.PASSWORD).toPropertyWhenPresent("password", record::getPassword)
+            .map(NO_PK.BALANCE).toPropertyWhenPresent("balance", record::getBalance)
         );
     }
 
     default int insertMultiple(String tableName, Collection<NoPk> records) {
         return client().insertMultiple(SqlBuilder.insertMultiple(records)
         	.into(targetTable(tableName))
-            .map(TABLE.qqNum).toProperty("qqNum")
-            .map(TABLE.realName).toProperty("realName")
-            .map(TABLE.nickname).toProperty("nickname")
-            .map(TABLE.password).toProperty("password")
-            .map(TABLE.balance).toProperty("balance")
+            .map(NO_PK.QQ_NUM).toProperty("qqNum")
+            .map(NO_PK.REAL_NAME).toProperty("realName")
+            .map(NO_PK.NICKNAME).toProperty("nickname")
+            .map(NO_PK.PASSWORD).toProperty("password")
+            .map(NO_PK.BALANCE).toProperty("balance")
         );
     }
 }

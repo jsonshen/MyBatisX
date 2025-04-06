@@ -34,7 +34,6 @@ import org.mybatis.generator.codegen.AbstractJavaClientGenerator;
 import org.mybatis.generator.codegen.AbstractXmlGenerator;
 import org.mybatis.generator.exception.ShellException;
 import org.mybatis.generator.internal.DefaultShellCallback;
-import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.logging.Log;
 import org.mybatis.generator.logging.LogFactory;
 
@@ -81,14 +80,14 @@ public class SpringJdbcDynamicSqlMapperGenerator extends AbstractJavaClientGener
     }
 
 	protected void preCalculate() {
-		recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
-		resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result";
-		tableFieldName = JavaBeansUtil.getValidPropertyName(introspectedTable.getMyBatisDynamicSQLTableObjectName());
-		fragmentGenerator = new FragmentGenerator.Builder().withIntrospectedTable(introspectedTable)
+		this.recordType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
+		this.resultMapId = recordType.getShortNameWithoutTypeArguments() + "Result";
+		this.tableFieldName = introspectedTable.getFullyQualifiedTableNameAtRuntime();
+		this.fragmentGenerator = new FragmentGenerator.Builder().withIntrospectedTable(introspectedTable)
 		    .withResultMapId(resultMapId)
 		    .withTableFieldName(tableFieldName)
 		    .build();
-		hasGeneratedKeys = introspectedTable.getGeneratedKey().isPresent();
+		this.hasGeneratedKeys = introspectedTable.getGeneratedKey().isPresent();
 	}
 
 	protected Interface createMapperInterface() {

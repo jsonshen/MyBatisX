@@ -15,6 +15,8 @@
  */
 package org.shenjia.mybatis.examples.service;
 
+import static org.shenjia.mybatis.examples.entity.MultiColPk.MULTI_COL_PK;
+
 import java.util.List;
 
 import org.mybatis.dynamic.sql.SqlBuilder;
@@ -56,12 +58,12 @@ public class ExamplesService {
 	}
 
 	public Page<MultiColPk> selectPageMultiColPkRecord(Pageable pageable) {
-		return multiColPkDao.selectPage(MultiColPk.TABLE.columns, pageable,
-		    c -> c.and(MultiColPk.TABLE.nickname, SqlBuilder.isEqualTo("123")), MultiColPk.TABLE.realName);
+		return multiColPkDao.selectPage(MULTI_COL_PK.columns, pageable,
+		    c -> c.and(MULTI_COL_PK.NICKNAME, SqlBuilder.isEqualTo("123")), MULTI_COL_PK.REAL_NAME);
 	}
 
 	public List<MultiColPk> selectRangeMultiColPkRecord(Pageable pageable) {
-		return multiColPkDao.selectRange(MultiColPk.TABLE.columns, pageable,
-		    c -> c.and(MultiColPk.TABLE.nickname, SqlBuilder.isEqualTo("123")), MultiColPk.TABLE.realName);
+		return multiColPkDao.selectRange(MULTI_COL_PK.columns, pageable,
+		    c -> c.and(MULTI_COL_PK.REAL_NAME, SqlBuilder.isEqualTo("123")), MULTI_COL_PK.REAL_NAME);
 	}
 }

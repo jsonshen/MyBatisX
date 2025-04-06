@@ -68,7 +68,7 @@ public abstract class AbstractMethodGenerator {
         private IntrospectedTable introspectedTable;
         private String tableFieldName;
 
-        public T withContext(Context context) {
+		public T withContext(Context context) {
             this.context = context;
             return getThis();
         }
@@ -82,6 +82,10 @@ public abstract class AbstractMethodGenerator {
             this.tableFieldName = tableFieldName;
             return getThis();
         }
+        
+        public String getTableFieldName() {
+			return tableFieldName;
+		}
 
         public abstract T getThis();
     }

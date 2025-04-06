@@ -39,33 +39,39 @@ public class FragmentGenerator {
     private final String resultMapId;
     private final String tableFieldName;
 
-    private FragmentGenerator(Builder builder) {
+	private FragmentGenerator(Builder builder) {
         this.introspectedTable = builder.introspectedTable;
         this.resultMapId = builder.resultMapId;
-        tableFieldName = builder.tableFieldName;
+        this.tableFieldName = builder.tableFieldName;
     }
+	
+	public String getTableFieldName() {
+		return tableFieldName;
+	}
 
-    public String getSelectList() {
-        return introspectedTable.getAllColumns().stream()
-                .map(c -> AbstractMethodGenerator.calculateFieldName(tableFieldName, c))
-                .collect(Collectors.joining(", ")); //$NON-NLS-1$
-    }
+	public String getSelectList() {
+		return introspectedTable.getAllColumns()
+		    .stream()
+		    .map(c -> AbstractMethodGenerator.calculateFieldName(tableFieldName, c))
+		    .collect(Collectors.joining(", ")); //$NON-NLS-1$
+	}
 
 	public MethodParts getPrimaryKeyWhereClauseAndParameters() {
 		MethodParts.Builder builder = new MethodParts.Builder();
 
 		boolean first = true;
 		for (IntrospectedColumn column : introspectedTable.getPrimaryKeyColumns()) {
-			String fieldName = AbstractMethodGenerator.calculateFieldName(tableFieldName, column);
+//			String fieldName = AbstractMethodGenerator.calculateFieldName(tableFieldName, column);
+			String fieldName = column.getActualColumnName();
 			builder.withImport(column.getFullyQualifiedJavaType());
 			builder.withParameter(new Parameter(column.getFullyQualifiedJavaType(), column.getJavaProperty()));
 			if (first) {
-				builder.withBodyLine("    c.where(TABLE." + fieldName //$NON-NLS-1$
+				builder.withBodyLine("    c.where("+ tableFieldName +"." + fieldName //$NON-NLS-1$
 				    + ", isEqualTo(" + column.getJavaProperty() //$NON-NLS-1$
 				    + "))"); //$NON-NLS-1$
 				first = false;
 			} else {
-				builder.withBodyLine("    .and(TABLE." + fieldName //$NON-NLS-1$
+				builder.withBodyLine("    .and("+ tableFieldName +"." + fieldName //$NON-NLS-1$
 				    + ", isEqualTo(" + column.getJavaProperty() //$NON-NLS-1$
 				    + "))"); //$NON-NLS-1$
 			}
@@ -80,16 +86,17 @@ public class FragmentGenerator {
 
         boolean first = true;
         for (IntrospectedColumn column : introspectedTable.getPrimaryKeyColumns()) {
-            String fieldName = AbstractMethodGenerator.calculateFieldName(tableFieldName, column);
-            String methodName = JavaBeansUtil.getGetterMethodName(
-                    column.getJavaProperty(), column.getFullyQualifiedJavaType());
+//            String fieldName = AbstractMethodGenerator.calculateFieldName(tableFieldName, column);
+        	String fieldName = column.getActualColumnName();
+			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
+			    column.getFullyQualifiedJavaType());
             if (first) {
-                lines.add(prefix + ".where(TABLE." + fieldName //$NON-NLS-1$
+                lines.add(prefix + ".where(" + tableFieldName + "." + fieldName //$NON-NLS-1$
                         + ", isEqualTo(record::" + methodName //$NON-NLS-1$
                         + "))"); //$NON-NLS-1$
                 first = false;
             } else {
-                lines.add(prefix + ".and(TABLE." + fieldName //$NON-NLS-1$
+                lines.add(prefix + ".and(" + tableFieldName + "." + fieldName //$NON-NLS-1$
                         + ", isEqualTo(record::" + methodName //$NON-NLS-1$
                         + "))"); //$NON-NLS-1$
             }
@@ -285,10 +292,10 @@ public class FragmentGenerator {
         boolean first = true;
         while (iter.hasNext()) {
             IntrospectedColumn column = iter.next();
-            String fieldName = AbstractMethodGenerator.calculateFieldName(tableFieldName, column);
+            String fieldName = column.getActualColumnName();
             String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
                     column.getFullyQualifiedJavaType());
-
+            
             String start;
             if (first) {
                 start = firstLinePrefix;
@@ -298,7 +305,7 @@ public class FragmentGenerator {
             }
 
             String line = start
-                    + ".set(TABLE." //$NON-NLS-1$
+                    + ".set(" + tableFieldName + "." //$NON-NLS-1$
                     + fieldName
                     + ")." //$NON-NLS-1$
                     + fragment

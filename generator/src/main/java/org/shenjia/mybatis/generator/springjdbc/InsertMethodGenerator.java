@@ -29,10 +29,12 @@ import org.mybatis.generator.codegen.mybatis3.ListUtilities;
 public class InsertMethodGenerator extends AbstractMethodGenerator {
 
 	private final FullyQualifiedJavaType recordType;
+	private final String tableFieldName;
 
 	private InsertMethodGenerator(Builder builder) {
 		super(builder);
-		recordType = builder.recordType;
+		this.recordType = builder.recordType;
+		this.tableFieldName = builder.getTableFieldName();
 	}
 
 	@Override
@@ -52,14 +54,14 @@ public class InsertMethodGenerator extends AbstractMethodGenerator {
 		List<IntrospectedColumn> columns = ListUtilities
 		    .removeIdentityAndGeneratedAlwaysColumns(introspectedTable.getAllColumns());
 		for (IntrospectedColumn column : columns) {
-			String fieldName = calculateFieldName(column);
-			method.addBodyLine("    .map(TABLE." + fieldName + ").toProperty(\"" + column.getJavaProperty() + "\")");
+			String fieldName = column.getActualColumnName();
+			method.addBodyLine("    .map("+ tableFieldName +"." + fieldName + ").toProperty(\"" + column.getJavaProperty() + "\")");
 		}
 		method.addBodyLine(");");
 
 		return MethodsAndImports.withMethod(method)
 		    .withImports(imports)
-		    .withStaticImport(recordType.getFullyQualifiedName() + ".TABLE")
+		    .withStaticImport(recordType.getFullyQualifiedName() + "." + tableFieldName)
 		    .build();
 	}
 
