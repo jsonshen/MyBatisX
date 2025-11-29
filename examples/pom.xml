@@ -8,6 +8,7 @@
 		<version>2.2.0</version>
 	</parent>
 	<artifactId>mybatisx-examples</artifactId>
+	<name>mybatisx-examples</name>
 
 	<dependencyManagement>
 		<dependencies>
