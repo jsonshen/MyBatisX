@@ -9,6 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>mybatisx-core</artifactId>
+	<name>mybatisx-core</name>
 	
 	<dependencyManagement>
 		<dependencies>

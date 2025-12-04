@@ -9,6 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>mybatisx-generator</artifactId>
+	<name>mybatisx-generator</name>
 	
 	<dependencies>
 		<dependency>
